@@ -1,66 +1,89 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../model/user.entity';
-import * as bcrypt from 'bcrypt';
-import { JwtService } from '@nestjs/jwt';
-import { Repository } from 'typeorm';
+import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../model/user.entity";
+import { RoleDto, UserDto } from "../dto";
+import * as bcrypt from "bcrypt";
+import { Repository } from "typeorm";
+import { Role } from "../model/role.entity";
+
+export interface Token {
+  token: string;
+}
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Role)
+    private rolesRepository: Repository<Role>
   ) {}
 
   findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
-  findOne(id: string): Promise<User> {
-    return this.usersRepository.findOneBy({ id });
+  async update(user: UserDto): Promise<null | UserDto> {
+    const findUser = await this.findUser(user);
+    if (!findUser) {
+      throw new BadRequestException();
+    }
+    findUser.firstName = user.firstName;
+    findUser.lastName = user.lastName;
+    if (user.password) {
+      const salt = await bcrypt.genSalt();
+      findUser.password = await bcrypt.hash(user.password, salt);
+    }
+    findUser.roles = await this.updateRoleList(user.roles);
+    return await this.usersRepository.save(findUser);
+  }
+
+  async updateRoleList(roles: RoleDto[]): Promise<Role[]> {
+    const result: Role[] = [];
+    for (const roleDto of roles) {
+      const role = await this.rolesRepository.findOne({ where: { role: roleDto.role } });
+      if (!role) {
+        throw new BadRequestException();
+      }
+      result.push(role);
+    }
+    return result;
+  }
+
+
+  async findOne(user: UserDto): Promise<UserDto> {
+    const findUser = await this.findUser(user);
+    if (!findUser) {
+      throw new BadRequestException();
+    }
+    return findUser.dto;
   }
 
   async remove(id: string): Promise<void> {
     await this.usersRepository.delete(id);
   }
 
-  async signup(user: User): Promise<User> {
-    const salt = await bcrypt.genSalt();
-    const hash = await bcrypt.hash(user.password, salt);
-    const newUser = {
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      password: hash,
-    } as User;
-    await this.usersRepository.insert(newUser);
-    return newUser;
+  async getOne(email: string): Promise<UserDto> {
+    const user = await this.usersRepository.findOne({
+      where: { email },
+      relations: [ "roles" ]
+    });
+    if (!user) {
+      throw new BadRequestException();
+    }
+    return user.dto;
   }
 
-  async signin(user: User, jwt: JwtService): Promise<any> {
-    const foundUser = await this.usersRepository.findOne({
-      where: { email: user.email },
-    });
-    if (foundUser) {
-      const { password } = foundUser;
-      if (bcrypt.compare(user.password, password)) {
-        const payload = { email: user.email };
-        return {
-          token: jwt.sign(payload),
-        };
-      }
-      return new HttpException(
-        'Incorrect username or password',
-        HttpStatus.UNAUTHORIZED,
+  async findUser(user: UserDto): Promise<User> {
+    if (!user || !user.email) {
+      throw new HttpException(
+        "Incorrect username or password",
+        HttpStatus.UNAUTHORIZED
       );
     }
-    return new HttpException(
-      'Incorrect username or password',
-      HttpStatus.UNAUTHORIZED,
-    );
-  }
-
-  async getOne(email): Promise<User> {
-    return await this.usersRepository.findOne({ where: { email } });
+    return await this.usersRepository.findOne({
+      where: { email: user.email },
+      relations: [ "roles" ]
+    });
   }
 }
