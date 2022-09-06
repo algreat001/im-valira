@@ -1,30 +1,38 @@
-import { Controller, Get, Res, Body, Post, HttpStatus } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User } from '../model/user.entity';
-import { JwtService } from '@nestjs/jwt';
+import {
+  Controller,
+  Get,
+  Res,
+  Body,
+  Post,
+  Put,
+  HttpStatus,
+  Req,
+  UseGuards
+} from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { UserDto } from "../dto";
+import { JwtAuthGuard } from "../auth/jwt-auth.guard";
 
-@Controller('/api/v1/user')
+@Controller("api/v1/user")
 export class UsersController {
-  constructor(
-    private readonly usersServerice: UsersService,
-    private jwtService: JwtService,
-  ) {}
+  constructor(private readonly usersServerice: UsersService) {}
 
   @Get()
-  getHello(): string {
-    return 'user api';
+  async getHello(): Promise<string> {
+    return "user api";
   }
 
-  @Post('/signup')
-  async Signup(@Res() response, @Body() user: User) {
-    const newUSer = await this.usersServerice.signup(user);
-    return response.status(HttpStatus.CREATED).json({
-      newUSer,
-    });
+  @UseGuards(JwtAuthGuard)
+  @Post("/profile")
+  async Profile(@Res() response, @Req() request) {
+    const findUser = await this.usersServerice.findOne(request.user);
+    return response.status(HttpStatus.OK).json(findUser);
   }
-  @Post('/signin')
-  async SignIn(@Res() response, @Body() user: User) {
-    const token = await this.usersServerice.signin(user, this.jwtService);
-    return response.status(HttpStatus.OK).json(token);
+
+  @UseGuards(JwtAuthGuard)
+  @Put("/profile")
+  async ProfileUpdate(@Res() response, @Body() user: UserDto) {
+    const findUser = await this.usersServerice.update(user);
+    return response.status(HttpStatus.OK).json(findUser);
   }
 }

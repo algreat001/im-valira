@@ -4,7 +4,11 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-} from 'typeorm';
+  ManyToMany,
+  JoinTable
+} from "typeorm";
+import { Role } from "./role.entity";
+import { UserDto } from "../dto";
 
 @Entity()
 export class User {
@@ -26,13 +30,26 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
+  @ManyToMany(() => Role, (role) => role.users)
+  @JoinTable()
+  roles: Role[];
+
   @CreateDateColumn({
-    type: 'timestamptz',
+    type: "timestamptz"
   })
   createdDate: Date;
 
   @UpdateDateColumn({
-    type: 'timestamptz',
+    type: "timestamptz"
   })
   updatedDate: Date;
+
+  get dto(): UserDto {
+    return {
+      firstName: this.firstName,
+      lastName: this.lastName,
+      email: this.email,
+      roles: this.roles?.map((role) => role.dto)
+    } as UserDto;
+  }
 }
