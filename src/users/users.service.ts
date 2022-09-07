@@ -19,8 +19,8 @@ export class UsersService {
     private rolesRepository: Repository<Role>
   ) {}
 
-  findAll(): Promise<User[]> {
-    return this.usersRepository.find();
+  async findAll(): Promise<UserDto[]> {
+    return (await this.usersRepository.find({ relations: [ "roles" ] })).map(user => user.dto);
   }
 
   async update(user: UserDto): Promise<null | UserDto> {
