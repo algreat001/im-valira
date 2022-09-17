@@ -46,6 +46,7 @@ export class Catalog {
 
   get dto(): CatalogDto {
     return {
+      id: this.id,
       name: this.name,
       meta: this.meta,
       products: this.products.map((product) => product.dto),

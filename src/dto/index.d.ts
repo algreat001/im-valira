@@ -11,6 +11,7 @@ export interface UserDto {
 }
 
 export interface CatalogDto {
+  id: string;
   name: string;
   meta: CatalogMeta;
   products: ProductDto[];
@@ -18,7 +19,7 @@ export interface CatalogDto {
 }
 
 export interface ProductDto {
-  sku: string;
+  id: string;
   name: string;
   meta: ProductMeta;
   catalogs: CatalogDto[];

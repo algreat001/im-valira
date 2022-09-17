@@ -1,9 +1,11 @@
-export interface PhotoMeta {
+import { JsonMap } from "../../json";
+
+export interface PhotoMeta extends JsonMap {
   name: string;
   link: string;
 }
 
-export interface ActionMeta {
+export interface ActionMeta extends JsonMap {
   name: string;
   description: string;
   link?: string;
@@ -12,14 +14,31 @@ export interface ActionMeta {
   operand: string;
 }
 
-export interface CatalogMeta {
+export type OptionType = "color" | "material";
+
+export interface Option extends JsonMap {
+  name: string;
+  description: string;
+  type: OptionType;
+  option: string;
+  action: ActionMeta;
+}
+
+export interface OptionMeta extends JsonMap {
+  name: string;
+  description: string;
+  options: Option[];
+}
+
+export interface CatalogMeta extends JsonMap {
   photo?: PhotoMeta[];
   description: string;
 }
 
-export interface ProductMeta {
+export interface ProductMeta extends JsonMap {
   description: string;
   price: number;
   actions: ActionMeta[];
   photos: PhotoMeta[];
+  options: OptionMeta[];
 }
