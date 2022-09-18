@@ -14,8 +14,17 @@ export class ProductService {
   ) {}
 
 
+  async getList(catalogId: string): Promise<ProductDto[]> {
+    const catalog = await this.catalogService.getOneWithProducts(catalogId);
+    const products = catalog.products;
+    if (!products) {
+      throw new BadRequestException();
+    }
+    return products.map(product => product.dto);
+  }
+
   async getOne(id: string): Promise<ProductDto> {
-    const product = await this.productsRepository.findOne({ where: { id } });
+    const product = await this.productsRepository.findOne({ where: { id }, relations: [ "catalogs" ] });
     if (!product) {
       throw new BadRequestException();
     }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, HttpStatus, Post, Put, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, HttpStatus, Param, Post, Put, Res, UseGuards } from "@nestjs/common";
 import { ProductDto, UserDto } from "../dto";
 import { ProductService } from "./product.service";
 import { Roles } from "../auth/roles-auth.decorator";
@@ -10,10 +10,16 @@ export class ProductController {
 
   }
 
-  @Post("/")
-  async getProductFromId(@Res() response, @Body() productId: string) {
+  @Post("/:productId")
+  async getProductFromId(@Res() response, @Param("productId") productId: string) {
     const findProduct = await this.productService.getOne(productId);
     return response.status(HttpStatus.OK).json(findProduct);
+  }
+
+  @Post("/list/:catalogId")
+  async getProductList(@Res() response, @Param("catalogId") catalogId: string) {
+    const findProducts = await this.productService.getList(catalogId);
+    return response.status(HttpStatus.OK).json(findProducts);
   }
 
   @Roles("Admin")

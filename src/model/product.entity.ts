@@ -39,7 +39,7 @@ export class Product {
       id: this.id,
       name: this.name,
       meta: this.meta,
-      catalogs: this.catalogs.map((cat) => cat.dto)
+      catalogs: this.catalogs && this.catalogs.map((cat) => cat.dto)
     };
   }
 }

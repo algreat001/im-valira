@@ -13,9 +13,11 @@ export interface UserDto {
 export interface CatalogDto {
   id: string;
   name: string;
+  description: string;
   meta: CatalogMeta;
   products: ProductDto[];
   parent: string;
+  hasChildren: boolean;
 }
 
 export interface ProductDto {
