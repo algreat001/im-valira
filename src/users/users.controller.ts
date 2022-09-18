@@ -12,6 +12,8 @@ import {
 import { UsersService } from "./users.service";
 import { UserDto } from "../dto";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
+import { Roles } from "../auth/roles-auth.decorator";
+import { RolesGuard } from "../auth/roles.guard";
 
 @Controller("api/v1/user")
 export class UsersController {
@@ -34,5 +36,13 @@ export class UsersController {
   async ProfileUpdate(@Res() response, @Body() user: UserDto) {
     const findUser = await this.usersServerice.update(user);
     return response.status(HttpStatus.OK).json(findUser);
+  }
+
+  @Roles("Admin")
+  @UseGuards(RolesGuard)
+  @Post("/profiles")
+  async Profiles(@Res() response) {
+    const findUsers = await this.usersServerice.findAll();
+    return response.status(HttpStatus.OK).json(findUsers);
   }
 }

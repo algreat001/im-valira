@@ -24,6 +24,9 @@ export class Catalog {
   @Column()
   description: string;
 
+  @Column({ nullable: true })
+  hasChildren: boolean;
+
   @Column({ type: "jsonb", nullable: true })
   meta: CatalogMeta;
 
@@ -46,10 +49,13 @@ export class Catalog {
 
   get dto(): CatalogDto {
     return {
+      id: this.id,
       name: this.name,
+      description: this.description,
       meta: this.meta,
-      products: this.products.map((product) => product.dto),
-      parent: this.parent.id
+      products: this.products && this.products.map((product) => product.dto),
+      parent: this.parent && this.parent.id,
+      hasChildren: this?.hasChildren ?? false
     };
   }
 }

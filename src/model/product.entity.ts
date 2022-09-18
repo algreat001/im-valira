@@ -15,9 +15,6 @@ export class Product {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column({ unique: true })
-  sku: string;
-
   @Column()
   name: string;
 
@@ -39,10 +36,10 @@ export class Product {
 
   get dto(): ProductDto {
     return {
-      sku: this.sku,
+      id: this.id,
       name: this.name,
       meta: this.meta,
-      catalogs: this.catalogs.map((cat) => cat.dto)
+      catalogs: this.catalogs && this.catalogs.map((cat) => cat.dto)
     };
   }
 }
