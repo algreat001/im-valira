@@ -1,9 +1,6 @@
 import { JsonMap } from "../../json";
 
-export interface PhotoMeta extends JsonMap {
-  name: string;
-  link: string;
-}
+export type PhotoMeta = string;
 
 export interface ActionMeta extends JsonMap {
   name: string;
@@ -38,6 +35,7 @@ export interface CatalogMeta extends JsonMap {
 export interface ProductMeta extends JsonMap {
   description: string;
   price: number;
+  rating: number;
   actions: ActionMeta[];
   photos: PhotoMeta[];
   options: OptionMeta[];

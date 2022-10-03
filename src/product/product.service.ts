@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Product } from "../model/product.entity";
-import { Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { ProductDto } from "../dto";
 import { CatalogService } from "../catalog/catalog.service";
 
@@ -14,13 +14,37 @@ export class ProductService {
   ) {}
 
 
-  async getList(catalogId: string): Promise<ProductDto[]> {
-    const catalog = await this.catalogService.getOneWithProducts(catalogId);
+  async getList(catalogId: string): Promise<string[]> {
+    const catalog = await this.catalogService.getOneWithProductIds(catalogId);
     const products = catalog.products;
     if (!products) {
       throw new BadRequestException();
     }
-    return products.map(product => product.dto);
+    return products.map(product => `${product.id}`);
+  }
+
+  async setList(catalogId, productIds): Promise<boolean> {
+    const catalog = await this.catalogService.getOne(catalogId);
+    const products: Product[] = [];
+    for (const id of productIds) {
+      const product = await this.productsRepository.findOne({ where: { id } });
+      if (!product) {
+        throw new BadRequestException();
+      }
+      products.push(product);
+    }
+
+    catalog.products = products;
+    this.catalogService.saveEntity(catalog);
+    return true;
+  }
+
+  async getSearchList(search: string): Promise<string[]> {
+    const products = await this.productsRepository.find({ select: [ "id" ], where: { name: ILike(`%${search}%`) } });
+    if (!products) {
+      throw new BadRequestException();
+    }
+    return products.map(product => `${product.id}`);
   }
 
   async getOne(id: string): Promise<ProductDto> {

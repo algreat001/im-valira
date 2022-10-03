@@ -36,7 +36,7 @@ export class Product {
 
   get dto(): ProductDto {
     return {
-      id: this.id,
+      id: `${this.id}`,
       name: this.name,
       meta: this.meta,
       catalogs: this.catalogs && this.catalogs.map((cat) => cat.dto)

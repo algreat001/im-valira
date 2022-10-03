@@ -12,8 +12,8 @@ export class CatalogService {
     private catalogRepository: Repository<Catalog>
   ) {}
 
-  async getCatalogsDtoFromParentId(parentCatalogId: string): Promise<CatalogDto[]> {
-    return (await this.getCatalogsFromParentId(parentCatalogId)).map(catalog => catalog.dto);
+  async getCatalogIdsFromParentId(parentCatalogId: string): Promise<string[]> {
+    return (await this.getCatalogsFromParentId(parentCatalogId)).map(catalog => catalog.id);
   }
 
   async getCatalogsFromParentId(parentCatalogId: null | string): Promise<Catalog[]> {
@@ -38,8 +38,11 @@ export class CatalogService {
     return catalog;
   }
 
-  async getOneWithProducts(id: string): Promise<Catalog> {
-    const catalog = await this.catalogRepository.findOne({ where: { id }, relations: [ "products" ] });
+  async getOneWithProductIds(id: string): Promise<Catalog> {
+    const catalog = await this.catalogRepository.findOne({
+      where: { id },
+      loadRelationIds: { relations: [ "products" ], disableMixedMap: true }
+    });
     if (!catalog) {
       throw new BadRequestException();
     }
@@ -58,6 +61,10 @@ export class CatalogService {
     const dest = new Catalog();
     await this.mergeDataFromDto(dest, source);
     return dest;
+  }
+
+  async saveEntity(catalog: Catalog): Promise<void> {
+    await this.catalogRepository.save(catalog);
   }
 
   async save(dto: CatalogDto): Promise<CatalogDto> {

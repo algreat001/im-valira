@@ -22,7 +22,21 @@ export class ProductController {
     return response.status(HttpStatus.OK).json(findProducts);
   }
 
-  @Roles("Admin")
+  @Roles("Admin", "Editor")
+  @UseGuards(RolesGuard)
+  @Put("/list/:catalogId")
+  async setProductList(@Res() response, @Param("catalogId") catalogId: string, @Body() productIds: string[]) {
+    const result = await this.productService.setList(catalogId, productIds);
+    return response.status(HttpStatus.OK).json(result);
+  }
+
+  @Post("/search/:search")
+  async getSearchProductList(@Res() response, @Param("search") search: string) {
+    const findProducts = await this.productService.getSearchList(search);
+    return response.status(HttpStatus.OK).json(findProducts);
+  }
+
+  @Roles("Admin", "Editor")
   @UseGuards(RolesGuard)
   @Put("/")
   async updateProduct(@Res() response, @Body() dto: ProductDto) {
@@ -30,7 +44,7 @@ export class ProductController {
     return response.status(HttpStatus.OK).json(updateProduct);
   }
 
-  @Roles("Admin")
+  @Roles("Admin", "Editor")
   @UseGuards(RolesGuard)
   @Delete("/")
   async deleteProduct(@Res() response, @Body() productId: string) {
