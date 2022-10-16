@@ -48,7 +48,7 @@ export class ProductController {
   @UseGuards(RolesGuard)
   @Delete("/")
   async deleteProduct(@Res() response, @Body() productId: string) {
-    const updateProduct = await this.productService.deleteProduct(productId);
+    await this.productService.deleteProduct(productId);
     return response.status(HttpStatus.OK).json("ok");
   }
 
