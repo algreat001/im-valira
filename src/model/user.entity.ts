@@ -30,7 +30,7 @@ export class User {
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, { eager: true })
   @JoinTable()
   roles: Role[];
 
@@ -51,5 +51,33 @@ export class User {
       email: this.email,
       roles: this.roles?.map((role) => role.dto)
     } as UserDto;
+  }
+
+  hasRole(roleName: string): boolean {
+    return this.roles.some(r => r.role === roleName);
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole("Admin");
+  }
+
+  isEditor(): boolean {
+    return this.isAdmin() || this.hasRole("Editor");
+  }
+
+  isModerator(): boolean {
+    return this.isAdmin() || this.hasRole("Moderator");
+  }
+
+  isSeller(): boolean {
+    return this.isAdmin() || this.hasRole("Seller");
+  }
+
+  isBlogger(): boolean {
+    return this.isAdmin() || this.hasRole("Post");
+  }
+
+  isUser(): boolean {
+    return this.isAdmin() || this.hasRole("User");
   }
 }

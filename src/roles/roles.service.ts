@@ -31,7 +31,7 @@ export class RolesService {
     if (!findRole || findRole.users.length > 0) {
       throw new BadRequestException();
     }
-    await this.rolesRepository.delete(findRole);
+    await this.rolesRepository.delete(findRole.id);
     return this.getAllRoles();
   }
 

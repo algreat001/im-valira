@@ -57,6 +57,15 @@ export interface CatalogMeta extends JsonMap {
   description: string;
 }
 
+export interface ProductReviewMeta extends JsonMap {
+  email: string;
+  author: string;
+  text: string;
+  rating?: number;
+  photos?: PhotoMeta[];
+  dataUpdate?: Date;
+}
+
 export interface ProductMeta extends JsonMap {
   description: string;
   price: number;
@@ -69,4 +78,5 @@ export interface ProductMeta extends JsonMap {
   photos: PhotoMeta[];
   options: OptionMeta[];
   characteristics?: CharacteristicMeta[];
+  reviews?: ProductReviewMeta[];
 }

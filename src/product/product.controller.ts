@@ -1,8 +1,10 @@
-import { Body, Controller, Delete, HttpStatus, Param, Post, Put, Res, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from "@nestjs/common";
 import { ProductDto, UserDto } from "../dto";
 import { ProductService } from "./product.service";
 import { Roles } from "../auth/roles-auth.decorator";
 import { RolesGuard } from "../auth/roles.guard";
+import { ProductReviewMeta } from "../model/meta";
+import { User } from "../model/user.entity";
 
 @Controller("api/v1/product")
 export class ProductController {
@@ -20,6 +22,48 @@ export class ProductController {
   async getProductList(@Res() response, @Param("catalogId") catalogId: string) {
     const findProducts = await this.productService.getList(catalogId);
     return response.status(HttpStatus.OK).json(findProducts);
+  }
+
+  @Roles("User")
+  @UseGuards(RolesGuard)
+  @Post("/:productId/review")
+  async addReview(
+    @Res() response,
+    @Req() request,
+    @Param("productId") productId: string,
+    @Body() review: ProductReviewMeta
+  ) {
+    const user = request.user as User;
+    const addReview = await this.productService.addReview(productId, user, review);
+    return response.status(HttpStatus.OK).json(addReview);
+  }
+
+  @Roles("User", "Moderator", "Admin")
+  @UseGuards(RolesGuard)
+  @Put("/:productId/review")
+  async updateReview(
+    @Res() response,
+    @Req() request,
+    @Param("productId") productId: string,
+    @Body() review: ProductReviewMeta
+  ) {
+    const user = request.user as User;
+    const updateReview = await this.productService.updateReview(productId, user, review);
+    return response.status(HttpStatus.OK).json(updateReview);
+  }
+
+  @Roles("User", "Moderator", "Admin")
+  @UseGuards(RolesGuard)
+  @Delete("/:productId/review")
+  async deleteReview(
+    @Res() response,
+    @Req() request,
+    @Param("productId") productId: string,
+    @Body() review: ProductReviewMeta
+  ) {
+    const user = request.user as User;
+    await this.productService.deleteReview(productId, user, review);
+    return response.status(HttpStatus.OK).json(true);
   }
 
   @Roles("Admin", "Editor")
