@@ -24,7 +24,7 @@ export interface ProductDto {
   id: string;
   name: string;
   meta: ProductMeta;
-  catalogs: CatalogDto[];
+  catalogs?: CatalogDto[];
 }
 
 export interface RoleDto {

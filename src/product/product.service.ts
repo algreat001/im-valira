@@ -41,6 +41,18 @@ export class ProductService {
     return true;
   }
 
+  async addToCatalog(catalogId, productId): Promise<ProductDto> {
+    const catalog = await this.catalogService.getOne(catalogId);
+    const product = await this.productsRepository.findOne({ where: { id: productId }, relations: [ "catalogs" ] });
+    if (!catalog || !product) {
+      throw new BadRequestException();
+    }
+    product.catalogs.push(catalog);
+    const updateProduct = await this.productsRepository.save(product);
+
+    return updateProduct.dto;
+  }
+
   async getSearchList(search: string): Promise<string[]> {
     const products = await this.productsRepository.find({ select: [ "id" ], where: { name: ILike(`%${search}%`) } });
     if (!products) {
@@ -58,10 +70,14 @@ export class ProductService {
   }
 
   async updateProduct(dto: ProductDto): Promise<ProductDto> {
-    let product = await this.productsRepository.findOne({ where: { id: dto.id } });
-    if (!product) {
+    let product: Product;
+    if (!dto.id) {
       product = await this.newProductFromDto(dto);
     } else {
+      product = await this.productsRepository.findOne({ where: { id: dto.id } });
+      if (!product) {
+        throw new BadRequestException();
+      }
       product = await this.updateProductFromDto(product, dto);
     }
     const resultProduct = await this.productsRepository.save(product);
@@ -152,16 +168,15 @@ export class ProductService {
 
   private async newProductFromDto(source: ProductDto): Promise<Product> {
     const dest = new Product();
-    dest.name = source.name;
-    dest.meta = source.meta;
-    dest.catalogs = await Promise.all(source.catalogs.map(async (dto) => await this.catalogService.getOne(dto.id)));
-    return dest;
+    return this.updateProductFromDto(dest, source);
   }
 
   private async updateProductFromDto(dest: Product, source: ProductDto): Promise<Product> {
     dest.name = source.name;
     dest.meta = source.meta;
-    dest.catalogs = await Promise.all(source.catalogs.map(async (dto) => await this.catalogService.getOne(dto.id)));
+    if (source.catalogs) {
+      dest.catalogs = await Promise.all(source.catalogs.map(async (dto) => await this.catalogService.getOne(dto.id)));
+    }
     return dest;
   }
 
