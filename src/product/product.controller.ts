@@ -3,7 +3,7 @@ import { ProductDto, UserDto } from "../dto";
 import { ProductService } from "./product.service";
 import { Roles } from "../auth/roles-auth.decorator";
 import { RolesGuard } from "../auth/roles.guard";
-import { ProductReviewMeta } from "../model/meta";
+import { CharacteristicMeta, ProductReviewMeta } from "../model/meta";
 import { User } from "../model/user.entity";
 
 @Controller("api/v1/product")
@@ -87,6 +87,42 @@ export class ProductController {
   ) {
     const user = request.user as User;
     await this.productService.deleteReview(productId, user, review);
+    return response.status(HttpStatus.OK).json(true);
+  }
+
+  @Roles("Editor", "Admin")
+  @UseGuards(RolesGuard)
+  @Post("/:productId/characteristic")
+  async addCharacteristic(
+    @Res() response,
+    @Param("productId") productId: string,
+    @Body() characteristic: CharacteristicMeta
+  ) {
+    const addReview = await this.productService.addCharacteristic(productId, characteristic);
+    return response.status(HttpStatus.OK).json(addReview);
+  }
+
+  @Roles("Editor", "Admin")
+  @UseGuards(RolesGuard)
+  @Put("/:productId/characteristic")
+  async updateCharacteristic(
+    @Res() response,
+    @Param("productId") productId: string,
+    @Body() characteristic: CharacteristicMeta
+  ) {
+    const updateReview = await this.productService.updateCharacteristic(productId, characteristic);
+    return response.status(HttpStatus.OK).json(updateReview);
+  }
+
+  @Roles("Editor", "Admin")
+  @UseGuards(RolesGuard)
+  @Delete("/:productId/characteristic")
+  async deleteCharacteristic(
+    @Res() response,
+    @Param("productId") productId: string,
+    @Body() characteristic: CharacteristicMeta
+  ) {
+    await this.productService.deleteCharacteristic(productId, characteristic);
     return response.status(HttpStatus.OK).json(true);
   }
 

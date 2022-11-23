@@ -80,3 +80,8 @@ export interface ProductMeta extends JsonMap {
   characteristics?: CharacteristicMeta[];
   reviews?: ProductReviewMeta[];
 }
+
+export interface CartMeta extends JsonMap {
+  productsCart: ProcuctCartMeta[];
+  
+}

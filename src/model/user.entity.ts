@@ -24,6 +24,12 @@ export class User {
   @Column()
   email: string;
 
+  @Column({ nullable: true, default: "" })
+  phone: string;
+
+  @Column({ nullable: true, default: "" })
+  address: string;
+
   @Column()
   password: string;
 
@@ -49,6 +55,8 @@ export class User {
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
+      phone: this.phone ?? "",
+      address: this.address ?? "",
       roles: this.roles?.map((role) => role.dto)
     } as UserDto;
   }
