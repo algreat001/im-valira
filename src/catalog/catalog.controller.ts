@@ -8,15 +8,21 @@ import { RolesGuard } from "../auth/roles.guard";
 export class CatalogController {
   constructor(private catalogService: CatalogService) {}
 
-  @Post("/:parentCatalogId")
+  @Post("/list/:parentCatalogId")
   async getCatalogFromParentId(@Res() response, @Param("parentCatalogId") parentCatalogId: string) {
-    const findCatalogs = await this.catalogService.getCatalogsDtoFromParentId(parentCatalogId);
+    const findCatalogs = await this.catalogService.getCatalogIdsFromParentId(parentCatalogId);
     return response.status(HttpStatus.OK).json(findCatalogs);
   }
 
-  @Post("/")
+  @Post("/list")
   async getMainCatalog(@Res() response) {
-    const findCatalogs = await this.catalogService.getCatalogsDtoFromParentId(null);
+    const findCatalogs = await this.catalogService.getCatalogIdsFromParentId(null);
+    return response.status(HttpStatus.OK).json(findCatalogs);
+  }
+
+  @Post("/:catalogId")
+  async getOneCatalog(@Res() response, @Param("catalogId") catalogId: string) {
+    const findCatalogs = await this.catalogService.getOneDto(catalogId);
     return response.status(HttpStatus.OK).json(findCatalogs);
   }
 

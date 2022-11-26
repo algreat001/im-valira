@@ -49,7 +49,7 @@ export class Catalog {
 
   get dto(): CatalogDto {
     return {
-      id: this.id,
+      id: `${this.id}`,
       name: this.name,
       description: this.description,
       meta: this.meta,

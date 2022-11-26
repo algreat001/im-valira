@@ -1,5 +1,8 @@
 import { Module } from "@nestjs/common";
 import { join } from "path/posix";
+import { MailerModule } from "@nestjs-modules/mailer";
+import { HandlebarsAdapter } from "@nestjs-modules/mailer/dist/adapters/handlebars.adapter";
+
 
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
@@ -18,6 +21,8 @@ import { RolesModule } from "./roles/roles.module";
 import { AuthModule } from "./auth/auth.module";
 import { ProductModule } from "./product/product.module";
 import { CatalogModule } from "./catalog/catalog.module";
+import { CartModule } from "./cart/cart.module";
+import { SendModule } from "./send/send.module";
 
 
 @Module({
@@ -38,11 +43,34 @@ import { CatalogModule } from "./catalog/catalog.module";
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, "..", "public")
     }),
+    MailerModule.forRoot({
+      transport: {
+        host: "smtp.yandex.ru",
+        port: 465,
+        secure: true,
+        auth: {
+          user: process.env.EMAIL_LOGIN,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      },
+      defaults: {
+        from: "Интернет магазин valira-decor.ru <office@energy-soft.ru>"
+      },
+      template: {
+        dir: process.cwd() + "/templates/",
+        adapter: new HandlebarsAdapter(), // or new PugAdapter()
+        options: {
+          strict: true
+        }
+      }
+    }),
     UsersModule,
     RolesModule,
     AuthModule,
     ProductModule,
-    CatalogModule
+    CatalogModule,
+    CartModule,
+    SendModule
   ],
   controllers: [ AppController ],
   providers: [ AppService ]

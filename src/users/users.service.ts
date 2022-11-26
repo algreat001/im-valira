@@ -30,6 +30,8 @@ export class UsersService {
     }
     findUser.firstName = user.firstName;
     findUser.lastName = user.lastName;
+    findUser.phone = user.phone;
+    findUser.address = user.address;
     if (user.password) {
       const salt = await bcrypt.genSalt();
       findUser.password = await bcrypt.hash(user.password, salt);

@@ -24,13 +24,19 @@ export class User {
   @Column()
   email: string;
 
+  @Column({ nullable: true, default: "" })
+  phone: string;
+
+  @Column({ nullable: true, default: "" })
+  address: string;
+
   @Column()
   password: string;
 
   @Column({ default: true })
   isActive: boolean;
 
-  @ManyToMany(() => Role, (role) => role.users)
+  @ManyToMany(() => Role, (role) => role.users, { eager: true })
   @JoinTable()
   roles: Role[];
 
@@ -49,7 +55,37 @@ export class User {
       firstName: this.firstName,
       lastName: this.lastName,
       email: this.email,
+      phone: this.phone ?? "",
+      address: this.address ?? "",
       roles: this.roles?.map((role) => role.dto)
     } as UserDto;
+  }
+
+  hasRole(roleName: string): boolean {
+    return this.roles.some(r => r.role === roleName);
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole("Admin");
+  }
+
+  isEditor(): boolean {
+    return this.isAdmin() || this.hasRole("Editor");
+  }
+
+  isModerator(): boolean {
+    return this.isAdmin() || this.hasRole("Moderator");
+  }
+
+  isSeller(): boolean {
+    return this.isAdmin() || this.hasRole("Seller");
+  }
+
+  isBlogger(): boolean {
+    return this.isAdmin() || this.hasRole("Post");
+  }
+
+  isUser(): boolean {
+    return this.isAdmin() || this.hasRole("User");
   }
 }

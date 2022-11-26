@@ -4,6 +4,8 @@ export interface UserDto {
   firstName?: string;
   lastName?: string;
   email: string;
+  phone?: string;
+  address?: string;
   password?: string;
   photo?: string;
   roles?: RoleDto[];
@@ -24,7 +26,7 @@ export interface ProductDto {
   id: string;
   name: string;
   meta: ProductMeta;
-  catalogs: CatalogDto[];
+  catalogs?: CatalogDto[];
 }
 
 export interface RoleDto {
@@ -38,3 +40,24 @@ export interface AddRoleDto {
 }
 
 export type DeleteRoleDto = AddRoleDto
+
+export interface OrderRequestDto {
+  products: ProductDto[];
+  user: UserDto;
+}
+
+export interface OrderResponseDto {
+  products: ProductDto[];
+  user: UserDto;
+}
+
+
+export interface CreateCartDto {
+  id: string;
+}
+
+export interface UpdateCartDto {
+  id: string;
+} //= PartialType(CreateCartDto)
+
+
