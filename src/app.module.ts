@@ -23,6 +23,9 @@ import { ProductModule } from "./product/product.module";
 import { CatalogModule } from "./catalog/catalog.module";
 import { CartModule } from "./cart/cart.module";
 import { SendModule } from "./send/send.module";
+import { ReportService } from './report/report.service';
+import { ReportController } from './report/report.controller';
+import { ReportModule } from './report/report.module';
 
 
 @Module({
@@ -70,10 +73,11 @@ import { SendModule } from "./send/send.module";
     ProductModule,
     CatalogModule,
     CartModule,
-    SendModule
+    SendModule,
+    ReportModule
   ],
-  controllers: [ AppController ],
-  providers: [ AppService ]
+  controllers: [ AppController, ReportController ],
+  providers: [ AppService, ReportService ]
 })
 export class AppModule {
   constructor(private dataSource: DataSource) {}
