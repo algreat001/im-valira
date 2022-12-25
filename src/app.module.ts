@@ -26,6 +26,7 @@ import { SendModule } from "./send/send.module";
 import { ReportService } from './report/report.service';
 import { ReportController } from './report/report.controller';
 import { ReportModule } from './report/report.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 
 @Module({
@@ -74,7 +75,8 @@ import { ReportModule } from './report/report.module';
     CatalogModule,
     CartModule,
     SendModule,
-    ReportModule
+    ReportModule,
+    TelegramModule
   ],
   controllers: [ AppController, ReportController ],
   providers: [ AppService, ReportService ]
