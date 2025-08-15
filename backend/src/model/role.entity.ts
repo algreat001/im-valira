@@ -4,15 +4,15 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany
-} from "typeorm";
-import { User } from "./user.entity";
-import { RoleDto } from "../dto";
+  ManyToMany,
+} from 'typeorm';
+import { User } from './user.entity';
+import { RoleDto } from '../dto';
 
 @Entity()
 export class Role {
   @PrimaryGeneratedColumn()
-  id: string;
+  id: number;
 
   @Column({ unique: true })
   role: string;
@@ -24,19 +24,19 @@ export class Role {
   users: User[];
 
   @CreateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   createdDate: Date;
 
   @UpdateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   updatedDate: Date;
 
   get dto(): RoleDto {
     return {
       role: this.role,
-      description: this.description
+      description: this.description,
     };
   }
 }

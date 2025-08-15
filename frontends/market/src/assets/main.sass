@@ -1,0 +1,71 @@
+// Глобальные стили для современного магазина
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap')
+
+:root
+  --font-family: 'Inter', Arial, sans-serif
+  --color-bg: #FFF0DE
+  --color-text: #222222
+  --color-muted: #DDDDDD
+  --color-border: #E0E0E0
+
+html, body
+  font-family: var(--font-family)
+  background: var(--color-bg)
+  color: var(--color-text)
+  margin: 0
+  padding: 0
+  min-height: 100vh
+
+h1, h2, h3, h4, h5, h6
+  font-family: var(--font-family)
+  font-weight: 700
+  margin: 0 0 0.5em 0
+
+p
+  margin: 0 0 1em 0
+
+a
+  color: inherit
+  text-decoration: none
+  transition: color 0.2s
+
+  &:hover
+    color: var(--color-muted)
+
+img
+  max-width: 100%
+  display: block
+
+.v-layout
+  margin: 0 auto
+  width: 100%
+  max-width: 1280px
+
+@media (max-width: 1920px)
+  .v-layout
+    max-width: 1280px
+
+.v-main
+  max-width: 1280px
+  min-height: 100vh
+
+
+// Адаптивность
+@media (max-width: 900px)
+  html
+    font-size: 15px
+
+@media (max-width: 600px)
+  html
+    font-size: 14px
+
+// Анимация появления
+.fade-in
+  opacity: 0
+  transform: translateY(20px)
+  animation: fadeInUp 0.6s ease forwards
+
+@keyframes fadeInUp
+  to
+    opacity: 1
+    transform: none

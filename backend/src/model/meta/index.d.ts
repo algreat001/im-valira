@@ -1,8 +1,6 @@
-import { JsonMap } from "json";
+import { JsonMap } from 'json';
 
-export type PhotoMeta = string;
-
-export type CurrencyType = "₽" | "$" | "€";
+export type CurrencyType = '₽' | '$' | '€';
 
 export interface Currency {
   symbol: CurrencyType;
@@ -10,17 +8,14 @@ export interface Currency {
 }
 
 export interface RurCurrency extends Currency {
-  symbol: "₽";
+  symbol: '₽';
   coefficient: 1.0;
 }
 
-export type Operation = "percentAdd" | "percentSub" | "add" | "sub";
+export type Operation = 'percentAdd' | 'percentSub' | 'add' | 'sub';
 
-export interface CharacteristicMeta extends JsonMap {
-  name: string;
-  value: string;
-  unitOfMeasurement: string;
-  link?: string;
+export interface SpecMeta extends JsonMap {
+  [key: string]: string;
 }
 
 export interface OperationMeta extends JsonMap {
@@ -36,25 +31,11 @@ export interface ActionMeta extends JsonMap {
   operation: OperationMeta;
 }
 
-export type OptionType = "color" | "material" | "size";
-
-export interface Option extends JsonMap {
-  name: string;
-  description?: string;
-  value: number | string;
-  operation?: OperationMeta;
-}
-
-export interface OptionMeta extends JsonMap {
-  name?: string;
-  description?: string;
-  type: OptionType;
-  options: Option[];
-}
-
-export interface CatalogMeta extends JsonMap {
-  photos?: PhotoMeta[];
+export interface CategoryMeta extends JsonMap {
   description: string;
+  images?: string;
+  icon?: string;
+  params?: string[];
 }
 
 export interface ProductReviewMeta extends JsonMap {
@@ -62,26 +43,38 @@ export interface ProductReviewMeta extends JsonMap {
   author: string;
   text: string;
   rating?: number;
-  photos?: PhotoMeta[];
+  gallery: string[];
   dataUpdate?: Date;
 }
 
 export interface ProductMeta extends JsonMap {
-  description: string;
+  article: string;
   price: number;
-  rating: number;
+  image: string;
+  gallery: string[];
+  description: string;
 
-  amount?: number;
-  deliveryDate?: Date;
+  rating?: number;
 
-  actions: ActionMeta[];
-  photos: PhotoMeta[];
-  options: OptionMeta[];
-  characteristics?: CharacteristicMeta[];
+  actions?: ActionMeta[];
+  specs?: SpecMeta;
   reviews?: ProductReviewMeta[];
 }
 
-export interface CartMeta extends JsonMap {
-  productsCart: ProcuctCartMeta[];
-  
+export interface DeliveryMeta extends JsonMap {
+  address: string;
+  city: string;
+  postal_code: string;
+  phone: string;
+  name: string;
+  tracking_number?: string;
+  tracking_link?: string;
+}
+
+export interface OrderMeta extends JsonMap {
+  payment_method: string;
+  description: string;
+  total_price: number;
+  payment_token?: string;
+  delivery?: DeliveryMeta;
 }

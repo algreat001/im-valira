@@ -1,10 +1,10 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { User } from "../model/user.entity";
-import { RoleDto, UserDto } from "../dto";
-import * as bcrypt from "bcrypt";
-import { Repository } from "typeorm";
-import { Role } from "../model/role.entity";
+import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { User } from '../model/user.entity';
+import { RoleDto, UserDto } from '../dto';
+import * as bcrypt from 'bcrypt';
+import { Repository } from 'typeorm';
+import { Role } from '../model/role.entity';
 
 export interface Token {
   token: string;
@@ -16,11 +16,11 @@ export class UsersService {
     @InjectRepository(User)
     private usersRepository: Repository<User>,
     @InjectRepository(Role)
-    private rolesRepository: Repository<Role>
+    private rolesRepository: Repository<Role>,
   ) {}
 
   async findAll(): Promise<UserDto[]> {
-    return (await this.usersRepository.find({ relations: [ "roles" ] })).map(user => user.dto);
+    return (await this.usersRepository.find({ relations: [ 'roles' ] })).map(user => user.dto);
   }
 
   async update(user: UserDto): Promise<null | UserDto> {
@@ -30,14 +30,34 @@ export class UsersService {
     }
     findUser.firstName = user.firstName;
     findUser.lastName = user.lastName;
+    findUser.middleName = user.middleName;
     findUser.phone = user.phone;
-    findUser.address = user.address;
-    if (user.password) {
-      const salt = await bcrypt.genSalt();
-      findUser.password = await bcrypt.hash(user.password, salt);
+    findUser.postalCode = user.postalCode;
+    findUser.deliveryCity = user.deliveryCity;
+    findUser.deliveryAddress = user.deliveryAddress;
+    const result = await this.usersRepository.save(findUser);
+    return result.dto;
+  }
+
+  async updateRoles(user: UserDto, roles: RoleDto[]): Promise<UserDto> {
+    const findUser = await this.findUser(user);
+    if (!findUser) {
+      throw new BadRequestException();
     }
-    findUser.roles = await this.updateRoleList(user.roles);
-    return await this.usersRepository.save(findUser);
+    findUser.roles = await this.updateRoleList(roles);
+    const result = await this.usersRepository.save(findUser);
+    return result.dto;
+  }
+
+  async updatePassword(user: UserDto): Promise<UserDto> {
+    const findUser = await this.findUser(user);
+    if (!findUser) {
+      throw new BadRequestException();
+    }
+    const salt = await bcrypt.genSalt();
+    findUser.password = await bcrypt.hash(user.password, salt);
+    const result = await this.usersRepository.save(findUser);
+    return result.dto;
   }
 
   async updateRoleList(roles: RoleDto[]): Promise<Role[]> {
@@ -61,14 +81,15 @@ export class UsersService {
     return findUser.dto;
   }
 
-  async remove(id: string): Promise<void> {
-    await this.usersRepository.delete(id);
+  async remove(id: string): Promise<boolean> {
+    const result = await this.usersRepository.delete(id);
+    return result.affected > 0;
   }
 
   async getOne(email: string): Promise<UserDto> {
     const user = await this.usersRepository.findOne({
       where: { email },
-      relations: [ "roles" ]
+      relations: [ 'roles' ],
     });
     if (!user) {
       throw new BadRequestException();
@@ -79,13 +100,13 @@ export class UsersService {
   async findUser(user: UserDto): Promise<User> {
     if (!user || !user.email) {
       throw new HttpException(
-        "Incorrect username or password",
-        HttpStatus.UNAUTHORIZED
+        'Incorrect username or password',
+        HttpStatus.UNAUTHORIZED,
       );
     }
     return await this.usersRepository.findOne({
       where: { email: user.email },
-      relations: [ "roles" ]
+      relations: [ 'roles' ],
     });
   }
 }

@@ -5,15 +5,15 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
-  JoinTable
-} from "typeorm";
-import { Role } from "./role.entity";
-import { UserDto } from "../dto";
+  JoinTable,
+} from 'typeorm';
+import { Role } from './role.entity';
+import { UserDto } from '../dto';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id: string;
+  user_id: number;
 
   @Column()
   firstName: string;
@@ -21,14 +21,23 @@ export class User {
   @Column()
   lastName: string;
 
-  @Column()
+  @Column({ nullable: true, default: '' })
+  middleName: string;
+
+  @Column({ nullable: false, default: '' })
   email: string;
 
-  @Column({ nullable: true, default: "" })
+  @Column({ nullable: true, default: '' })
   phone: string;
 
-  @Column({ nullable: true, default: "" })
-  address: string;
+  @Column({ nullable: true, default: '' })
+  postalCode: string;
+
+  @Column({ nullable: true, default: '' })
+  deliveryCity: string;
+
+  @Column({ nullable: true, default: '' })
+  deliveryAddress: string;
 
   @Column()
   password: string;
@@ -41,12 +50,12 @@ export class User {
   roles: Role[];
 
   @CreateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   createdDate: Date;
 
   @UpdateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   updatedDate: Date;
 
@@ -54,10 +63,13 @@ export class User {
     return {
       firstName: this.firstName,
       lastName: this.lastName,
+      middleName: this.middleName,
       email: this.email,
-      phone: this.phone ?? "",
-      address: this.address ?? "",
-      roles: this.roles?.map((role) => role.dto)
+      phone: this.phone ?? '',
+      postalCode: this.postalCode ?? '',
+      deliveryCity: this.deliveryCity ?? '',
+      deliveryAddress: this.deliveryAddress ?? '',
+      roles: this.roles?.map((role) => role.dto),
     } as UserDto;
   }
 
@@ -66,26 +78,26 @@ export class User {
   }
 
   isAdmin(): boolean {
-    return this.hasRole("Admin");
+    return this.hasRole('Admin');
   }
 
   isEditor(): boolean {
-    return this.isAdmin() || this.hasRole("Editor");
+    return this.isAdmin() || this.hasRole('Editor');
   }
 
   isModerator(): boolean {
-    return this.isAdmin() || this.hasRole("Moderator");
+    return this.isAdmin() || this.hasRole('Moderator');
   }
 
   isSeller(): boolean {
-    return this.isAdmin() || this.hasRole("Seller");
+    return this.isAdmin() || this.hasRole('Seller');
   }
 
   isBlogger(): boolean {
-    return this.isAdmin() || this.hasRole("Post");
+    return this.isAdmin() || this.hasRole('Post');
   }
 
   isUser(): boolean {
-    return this.isAdmin() || this.hasRole("User");
+    return this.isAdmin() || this.hasRole('User');
   }
 }

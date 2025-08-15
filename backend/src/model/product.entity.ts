@@ -4,42 +4,62 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  ManyToMany
-} from "typeorm";
-import { Catalog } from "./catalog.entity";
-import { ProductDto } from "../dto";
-import { ProductMeta } from "./meta";
+  ManyToMany,
+  OneToMany,
+} from 'typeorm';
+import { Category } from './category.entity';
+import { ProductDto } from '../dto';
+import { ProductMeta } from './meta';
+import { ProductVariant } from './product.variant.entity';
 
 @Entity()
 export class Product {
   @PrimaryGeneratedColumn()
-  id: string;
+  product_id: number;
 
   @Column()
   name: string;
 
-  @Column({ type: "jsonb", nullable: true })
+  @Column({ type: 'jsonb', nullable: true })
   meta: ProductMeta;
 
-  @ManyToMany(() => Catalog, (catalog) => catalog.products)
-  catalogs: Catalog[];
+  @ManyToMany(() => Category, (catalog) => catalog.products, { eager: true })
+  categories: Category[];
+
+  @OneToMany(() => ProductVariant, (variant) => variant.product, { eager: true })
+  variants: ProductVariant[];
 
   @CreateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   createdDate: Date;
 
   @UpdateDateColumn({
-    type: "timestamptz"
+    type: 'timestamptz',
   })
   updatedDate: Date;
 
   get dto(): ProductDto {
     return {
-      id: `${this.id}`,
+      product_id: this.product_id,
       name: this.name,
       meta: this.meta,
-      catalogs: this.catalogs && this.catalogs.map((cat) => cat.dto)
+      categories: this.categories && this.categories.map((cat) => cat.category_id),
+      variants: this.variants && this.variants.map(variant => variant.dto),
     };
+  }
+
+  static fromDto(dto: ProductDto, categories?: Category[]): Product {
+    const product = new Product();
+    product.product_id = dto.product_id;
+    product.name = dto.name;
+    product.meta = dto.meta;
+    if (!!categories) {
+      product.categories = dto.categories.map(
+        (catId) => categories.find(cat => cat.category_id === catId),
+      ).filter(Boolean) as Category[];
+    }
+
+    return product;
   }
 }

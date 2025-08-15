@@ -20,16 +20,13 @@ export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
       ROLES_KEY,
-      [context.getHandler(), context.getClass()],
+      [ context.getHandler(), context.getClass() ],
     );
     if (!requiredRoles) {
       return true;
     }
     const req = context.switchToHttp().getRequest();
-    if (
-      !req.headers.authorization ||
-      !req.headers.authorization.startsWith('Bearer')
-    ) {
+    if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer')) {
       throw new UnauthorizedException();
     }
 
