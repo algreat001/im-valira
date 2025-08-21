@@ -2,6 +2,7 @@
 /dist
 /node_modules
 /src/public
+/public/images/gallery
 
 # Logs
 logs

@@ -1,16 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Role } from "../model/role.entity";
-import { Repository } from "typeorm";
-import { AddRoleDto, RoleDto, UserDto } from "../dto";
-import { BadRequestException } from "@nestjs/common/exceptions/bad-request.exception";
-import { User } from "../model/user.entity";
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Role } from '@/model/role.entity';
+import { Repository } from 'typeorm';
+import { RoleDto } from '@/dto';
+import { BadRequestException } from '@nestjs/common/exceptions/bad-request.exception';
 
 @Injectable()
 export class RolesService {
   constructor(
     @InjectRepository(Role)
-    private rolesRepository: Repository<Role>
+    private rolesRepository: Repository<Role>,
   ) {}
 
   async creteRole(role: RoleDto): Promise<RoleDto> {
@@ -20,7 +19,7 @@ export class RolesService {
     }
     const saveRole = {
       role: role.role,
-      description: role.description
+      description: role.description,
     } as Role;
     const newRole = await this.rolesRepository.save(saveRole);
     return newRole.dto;
@@ -44,12 +43,12 @@ export class RolesService {
   }
 
   async getDefaultRoles(): Promise<Role[]> {
-    return [ await this.getRoleFromRepository("User") ];
+    return [ await this.getRoleFromRepository('User') ];
   }
 
   private async getRoleFromRepository(role: string, withUser = false): Promise<Role> {
     const option = withUser
-      ? { where: { role }, include: [ "users" ] }
+      ? { where: { role }, include: [ 'users' ] }
       : { where: { role } };
     return await this.rolesRepository.findOne(option);
   }

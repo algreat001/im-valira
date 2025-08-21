@@ -1,0 +1,38 @@
+// Переменные для компонентов
+$primary-color: #1976d2
+$border-radius: 4px
+$active-border-width: 2px
+$hover-opacity: 0.85
+$transition-duration: 0.2s
+$selected-shadow: 0 0 0 2px rgba(25, 118, 210, 0.5)
+$disabled-opacity: 0.5
+$spacing-xs: 4px
+$spacing-sm: 8px
+$spacing-md: 16px
+$spacing-lg: 24px
+$color-button-size: 36px
+$color-button-size-sm: 28px
+$color-button-size-lg: 44px
+$border-color: #e0e0e0
+$font-size-base: 14px
+$font-size-lg: 16px
+$font-weight-medium: 500
+$font-weight-bold: 700
+
+// Миксины
+@mixin flex-center
+  display: flex
+  align-items: center
+  justify-content: center
+
+@mixin flex-between
+  display: flex
+  align-items: center
+  justify-content: space-between
+
+@mixin transition-all
+  transition: all $transition-duration ease-in-out
+
+@mixin focus-outline
+  outline: none
+  box-shadow: $selected-shadow

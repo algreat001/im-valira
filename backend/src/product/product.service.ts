@@ -1,39 +1,48 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Product } from '../model/product.entity';
 import { FindOptionsRelations, ILike, Repository } from 'typeorm';
-import { ProductDto } from '../dto';
-import { CatalogService } from '../catalog/catalog.service';
-import { TelegramService } from '../telegram/telegram.service';
-import { CharacteristicMeta, ProductReviewMeta } from '../model/meta';
-import { User } from '../model/user.entity';
+
+import { CategoryService } from '@/category/category.service';
+import { TelegramService } from '@/telegram/telegram.service';
+
+import { Product } from '@/model/product.entity';
+import { User } from '@/model/user.entity';
+
+import { ProductDto } from '@/dto';
+import { ProductReviewMeta } from '@/model/meta';
 
 @Injectable()
 export class ProductService {
   constructor(
     @InjectRepository(Product)
     private readonly productsRepository: Repository<Product>,
-    private readonly catalogService: CatalogService,
+    private readonly catalogService: CategoryService,
     private readonly telegramService: TelegramService,
   ) {}
 
   async getProduct(
-    id: string,
+    product_id: number,
     relations?: FindOptionsRelations<Product>,
   ): Promise<Product> {
-    return this.productsRepository.findOne({ where: { id }, relations });
+    return this.productsRepository.findOne({ where: { product_id }, relations });
   }
 
-  async getList(catalogId: string): Promise<string[]> {
+  async getAllProducts(
+    relations?: FindOptionsRelations<Product>,
+  ): Promise<Product[]> {
+    return this.productsRepository.find({ take: 1000, relations });
+  }
+
+  async getList(catalogId: number): Promise<string[]> {
     const catalog = await this.catalogService.getOneWithProductIds(catalogId);
     const products = catalog.products;
     if (!products) {
       throw new BadRequestException();
     }
-    return products.map((product) => `${product.id}`);
+    return products.map((product) => `${product.product_id}`);
   }
 
-  async setList(catalogId, productIds): Promise<boolean> {
+  async setList(catalogId: number, productIds): Promise<boolean> {
     const catalog = await this.catalogService.getOne(catalogId);
     const products: Product[] = [];
     for (const id of productIds) {
@@ -49,69 +58,35 @@ export class ProductService {
     return true;
   }
 
-  async addToCatalog(catalogId, productId): Promise<ProductDto> {
-    const catalog = await this.catalogService.getOne(catalogId);
-    const product = await this.getProduct(productId, { catalogs: true }); // this.productsRepository.findOne({ where: { id: productId }, relations: [ "catalogs" ] });
-    if (!catalog || !product) {
-      throw new BadRequestException();
-    }
-    product.catalogs.push(catalog);
-    const updateProduct = await this.productsRepository.save(product);
-
-    return updateProduct.dto;
-  }
-
   async getSearchList(search: string): Promise<string[]> {
     const products = await this.productsRepository.find({
-      select: ['id'],
+      select: [ 'product_id' ],
       where: { name: ILike(`%${search}%`) },
     });
     if (!products) {
       throw new BadRequestException();
     }
-    return products.map((product) => `${product.id}`);
+    return products.map((product) => `${product.product_id}`);
   }
 
-  async getOne(id: string): Promise<ProductDto> {
-    const product = await this.getProduct(id, { catalogs: true }); //await this.productsRepository.findOne({ where: { id }, relations: [ "catalogs" ] });
+  async getAll(): Promise<ProductDto[]> {
+    const products = await this.getAllProducts({ categories: true, variants: true });
+    if (!products) {
+      throw new BadRequestException();
+    }
+    return products.map((product) => product.dto);
+  }
+
+  async getOne(id: number): Promise<ProductDto> {
+    const product = await this.getProduct(id, { categories: true, variants: true }); //await this.productsRepository.findOne({ where: { id }, relations: [ "catalogs" ] });
     if (!product) {
       throw new BadRequestException();
     }
     return product.dto;
   }
 
-  async updateProduct(dto: ProductDto): Promise<ProductDto> {
-    let product: Product;
-    if (!dto.id) {
-      product = await this.newProductFromDto(dto);
-    } else {
-      product = await this.getProduct(dto.id); //await this.productsRepository.findOne({ where: { id: dto.id } });
-      if (!product) {
-        throw new BadRequestException();
-      }
-      product = await this.updateProductFromDto(product, dto);
-    }
-    const resultProduct = await this.productsRepository.save(product);
-    if (!resultProduct) {
-      throw new BadRequestException();
-    }
-    return resultProduct.dto;
-  }
-
-  async deleteProduct(id: string): Promise<void> {
-    const product = await this.getProduct(id); //await this.productsRepository.findOne({ where: { id } });
-    if (!product) {
-      throw new BadRequestException();
-    }
-    const result = await this.productsRepository.delete({ id });
-    if (result.affected === 0) {
-      throw new BadRequestException();
-    }
-    return;
-  }
-
   private async getProductForReviewEdit(
-    id: string,
+    id: number,
     user: User,
     review: ProductReviewMeta,
   ): Promise<Product> {
@@ -141,7 +116,7 @@ export class ProductService {
   }
 
   async addReview(
-    id: string,
+    id: number,
     user: User,
     review: ProductReviewMeta,
   ): Promise<null | ProductReviewMeta> {
@@ -164,15 +139,15 @@ export class ProductService {
 
     this.telegramService.sendMessage(
       'Новый обзор на товар:\n' +
-        `${product.name} Id: ${product.id}\n` +
-        `${savedReview.text}`,
+      `${product.name} Id: ${product.product_id}\n` +
+      `${savedReview.text}`,
     );
 
     return savedReview;
   }
 
   async updateReview(
-    id: string,
+    id: number,
     user: User,
     review: ProductReviewMeta,
   ): Promise<null | ProductReviewMeta> {
@@ -198,7 +173,7 @@ export class ProductService {
   }
 
   async deleteReview(
-    id: string,
+    id: number,
     user: User,
     review: ProductReviewMeta,
   ): Promise<void> {
@@ -211,91 +186,4 @@ export class ProductService {
     await this.productsRepository.save(product);
   }
 
-  private cbFindCharacteristic(
-    characteristic: CharacteristicMeta,
-  ): (characteristic: CharacteristicMeta) => boolean {
-    return (ch) =>
-      ch.name === characteristic.name &&
-      ch.value === characteristic.value &&
-      ch.unitOfMeasurement === characteristic.unitOfMeasurement;
-  }
-
-  private cbFilterCharacteristic(
-    characteristic: CharacteristicMeta,
-  ): (characteristic: CharacteristicMeta) => boolean {
-    return (ch) => ch.name !== characteristic.name;
-  }
-
-  async addCharacteristic(
-    id: string,
-    characteristic: CharacteristicMeta,
-  ): Promise<null | CharacteristicMeta> {
-    const product = await this.getProduct(id);
-
-    if (!!product.meta.characteristics) {
-      product.meta.characteristics.push(characteristic);
-    } else {
-      product.meta.characteristics = [characteristic];
-    }
-    const resultProduct = await this.productsRepository.save(product);
-    const characteristics = resultProduct.meta?.characteristics;
-    if (!characteristics) {
-      throw new BadRequestException();
-    }
-    return characteristics.find(this.cbFindCharacteristic(characteristic));
-  }
-
-  async updateCharacteristic(
-    id: string,
-    characteristic: CharacteristicMeta,
-  ): Promise<null | CharacteristicMeta> {
-    const product = await this.getProduct(id);
-
-    const updateCharacteristics = product.meta.characteristics.filter(
-      this.cbFilterCharacteristic(characteristic),
-    );
-
-    updateCharacteristics.push(characteristic);
-    product.meta.characteristics = updateCharacteristics;
-
-    const resultProduct = await this.productsRepository.save(product);
-    const characteristics = resultProduct.meta?.characteristics;
-    if (!characteristics) {
-      throw new BadRequestException();
-    }
-    return characteristics.find(this.cbFindCharacteristic(characteristic));
-  }
-
-  async deleteCharacteristic(
-    id: string,
-    characteristic: CharacteristicMeta,
-  ): Promise<void> {
-    const product = await this.getProduct(id);
-
-    product.meta.characteristics = product.meta.characteristics.filter(
-      this.cbFilterCharacteristic(characteristic),
-    );
-    await this.productsRepository.save(product);
-  }
-
-  private async newProductFromDto(source: ProductDto): Promise<Product> {
-    const dest = new Product();
-    return this.updateProductFromDto(dest, source);
-  }
-
-  private async updateProductFromDto(
-    dest: Product,
-    source: ProductDto,
-  ): Promise<Product> {
-    dest.name = source.name;
-    dest.meta = source.meta;
-    if (source.catalogs) {
-      dest.catalogs = await Promise.all(
-        source.catalogs.map(
-          async (dto) => await this.catalogService.getOne(dto.id),
-        ),
-      );
-    }
-    return dest;
-  }
 }

@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UsersService } from '../users/users.service';
+import { UsersService } from '@/users/users.service';
 import { Reflector } from '@nestjs/core';
 import { ROLES_KEY } from './roles-auth.decorator';
 
@@ -20,21 +20,18 @@ export class RolesGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const requiredRoles = this.reflector.getAllAndOverride<string[]>(
       ROLES_KEY,
-      [context.getHandler(), context.getClass()],
+      [ context.getHandler(), context.getClass() ],
     );
     if (!requiredRoles) {
       return true;
     }
     const req = context.switchToHttp().getRequest();
-    if (
-      !req.headers.authorization ||
-      !req.headers.authorization.startsWith('Bearer')
-    ) {
+    if (!req.headers.authorization || !req.headers.authorization.startsWith('Bearer')) {
       throw new UnauthorizedException();
     }
 
     const token = req.headers.authorization.split(' ')[1];
-    const decoded = this.jwtService.verify(token);
+    const decoded = this.jwtService.verify(token, { secret: process.env.JWT_SECRET_KEY });
     const user = await this.userService.findUser(decoded);
     if (!user) {
       throw new UnauthorizedException();
