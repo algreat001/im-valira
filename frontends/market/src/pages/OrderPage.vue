@@ -87,7 +87,7 @@ onMounted(async () => {
       </v-col>
       <v-col cols="12">
         <v-tabs v-model="mode" color="primary" grow>
-          <v-tab value="active">Активные</v-tab>
+          <v-tab value="active">В работе</v-tab>
           <v-tab value="completed">Завершенные</v-tab>
         </v-tabs>
       </v-col>

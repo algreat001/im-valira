@@ -36,23 +36,15 @@ onMounted(dashboard.load);
           <v-divider />
 
           <v-card-text>
-            <v-row>
-              <v-col cols="15" md="3">
-                <v-btn block color="primary" to="/users">Пользователи</v-btn>
-              </v-col>
-              <v-col cols="15" md="3">
-                <v-btn block color="primary" to="/categories">Категории</v-btn>
-              </v-col>
-              <v-col cols="15" md="3">
-                <v-btn block color="primary" to="/products">Товары</v-btn>
-              </v-col>
-              <v-col cols="15" md="3">
-                <v-btn block color="primary" to="/orders">Заказы</v-btn>
-              </v-col>
-              <v-col cols="15" md="3">
-                <v-btn block color="primary" to="/gallery">Галерея</v-btn>
-              </v-col>
-            </v-row>
+            <v-col cols="12" md="12">
+              <v-row class="row justify-start ga-4">
+                <v-btn color="primary" to="/users">Пользователи</v-btn>
+                <v-btn color="primary" to="/categories">Категории</v-btn>
+                <v-btn color="primary" to="/products">Товары</v-btn>
+                <v-btn color="primary" to="/orders">Заказы</v-btn>
+                <v-btn color="primary" to="/gallery">Галерея</v-btn>
+              </v-row>
+            </v-col>
           </v-card-text>
 
           <v-progress-linear v-if="loading" indeterminate color="primary" class="mb-2" />
