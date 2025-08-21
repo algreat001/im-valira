@@ -11,8 +11,6 @@ const model = defineModel<Partial<ProductVariantDto>>({ required: true });
 
 interface Props {
   loading: boolean;
-  productId?: number | string;
-  variantId?: number | string;
 }
 
 const props = defineProps<Props>();
