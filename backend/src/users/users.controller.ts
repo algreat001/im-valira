@@ -10,10 +10,10 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UserDto } from '../dto';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { Roles } from '../auth/roles-auth.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { UserDto } from '@/dto';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
+import { Roles } from '@/auth/roles-auth.decorator';
+import { RolesGuard } from '@/auth/roles.guard';
 
 @Controller('api/v1/user')
 export class UsersController {

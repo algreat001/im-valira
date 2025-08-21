@@ -8,7 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Category } from './category.entity';
-import { ProductDto } from '../dto';
+import { ProductDto } from '@/dto';
 import { ProductMeta } from './meta';
 import { ProductVariant } from './product.variant.entity';
 

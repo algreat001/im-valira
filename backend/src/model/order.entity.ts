@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from './user.entity';
 import { OrderItem } from './order.item.entity';
-import { OrderDto, UpdateOrderDto } from '../dto';
+import { OrderDto, UpdateOrderDto } from '@/dto';
 import { DeliveryMeta, OrderMeta } from './meta';
 
 export type OrderStatus =
@@ -43,6 +43,9 @@ export class Order {
   @Column()
   is_completed: boolean;
 
+  @Column({ type: 'boolean', default: false })
+  is_paid: boolean;
+
   @OneToMany(() => OrderItem, (item) => item.order)
   items: OrderItem[];
 
@@ -63,8 +66,10 @@ export class Order {
       status: this.status,
       meta: this.meta,
       is_completed: this.is_completed,
+      is_paid: this.is_paid,
       created_at: this.createdDate.toUTCString(),
       updated_at: this.updatedDate.toUTCString(),
+      items: this.items?.map(item => item.dto) ?? undefined,
     };
   }
 
@@ -82,10 +87,11 @@ export class Order {
     order.number = `ORD-${user.user_id}-${Date.now()}`;
     order.status = 'pending';
     order.is_completed = false;
+    order.is_paid = false;
     order.meta = {
-      payment_method: meta.payment_method,
-      description: meta.description,
-      total_price: meta.total_price,
+      payment_method: meta?.payment_method ?? 'cash',
+      description: meta?.description ?? '',
+      total_price: meta?.total_price ?? 0,
       delivery: delivery,
     };
     return order;
@@ -93,8 +99,16 @@ export class Order {
 
   static updateFromDto(order: Order, dto: UpdateOrderDto) {
     order.status = dto?.status ?? order.status;
+    order.meta = {
+      payment_method: dto.meta?.payment_method ?? order.meta.payment_method,
+      description: dto.meta?.description ?? order.meta.description,
+      total_price: dto.meta?.total_price ?? order.meta.total_price,
+      delivery: dto.meta?.delivery ?? order.meta.delivery,
+    };
+
     order.meta = dto?.meta ?? order.meta;
     order.is_completed = dto?.is_completed ?? order.is_completed;
+    order.is_paid = dto?.is_paid ?? order.is_paid;
   }
 
 }

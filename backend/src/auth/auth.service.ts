@@ -4,15 +4,15 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { User } from '../model/user.entity';
+import { User } from '@/model/user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
-import { Token, UsersService } from '../users/users.service';
+import { Token, UsersService } from '@/users/users.service';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Role } from '../model/role.entity';
+import { Role } from '@/model/role.entity';
 import { Repository } from 'typeorm';
-import { RolesService } from '../roles/roles.service';
-import { UserDto } from '../dto';
+import { RolesService } from '@/roles/roles.service';
+import { UserDto } from '@/dto';
 
 @Injectable()
 export class AuthService {
@@ -39,6 +39,7 @@ export class AuthService {
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       middleName: user?.middleName || '',
+      name: user?.name || '',
       phone: user?.phone || '',
       postalCode: user?.postalCode || '',
       deliveryCity: user?.deliveryCity || '',

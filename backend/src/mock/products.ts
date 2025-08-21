@@ -1,5 +1,5 @@
 // Моковые данные товаров для магазина
-import { CategoryDto, ProductDto } from '../dto';
+import { CategoryDto, ProductDto } from '@/dto';
 
 export const newProduct: number[] = [
   1, 2, 3, 4, 5, 6, 7, 8, // id новых товаров

@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CategoryDto } from '../dto';
-import { Category } from '../model/category.entity';
+import { CategoryDto } from '@/dto';
+import { Category } from '@/model/category.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 
@@ -67,7 +67,10 @@ export class CategoryService {
     dest.name = source.name;
     dest.meta = source.meta;
     dest.hasChildren = source.hasChildren;
-    dest.parent = source.parent ? await this.getOne(source.parent) : null;
+    if (source.parent) {
+      console.log('parent', source.parent);
+      dest.parent = await this.getOne(source.parent);
+    }
   }
 
   async newCategoryFromDto(source: CategoryDto): Promise<Category> {

@@ -6,17 +6,19 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
-import { UsersService } from './users/users.service';
+import { UsersService } from '@/users/users.service';
 
 interface UserRequest extends Request {
   user: any;
 }
+
 @Injectable()
 export class isAuthenticated implements NestMiddleware {
   constructor(
     private readonly jwt: JwtService,
     private readonly userService: UsersService,
   ) {}
+
   async use(req: UserRequest, res: Response, next: NextFunction) {
     try {
       if (

@@ -7,7 +7,7 @@ import {
   ManyToMany,
 } from 'typeorm';
 import { User } from './user.entity';
-import { RoleDto } from '../dto';
+import { RoleDto } from '@/dto';
 
 @Entity()
 export class Role {

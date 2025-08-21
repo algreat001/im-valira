@@ -24,6 +24,7 @@ export interface OrderDto {
   number: string,
   status: OrderStatus,
   is_completed: boolean,
+  is_paid: boolean,
   meta: OrderMeta,
   created_at: string,
   updated_at: string,

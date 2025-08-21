@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { ProductVariantDto } from '../dto';
+import { ProductVariantDto } from '@/dto';
 import { ProductMeta } from './meta';
 import { Product } from './product.entity';
 

@@ -1,7 +1,7 @@
 import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Product } from './product.entity';
 import { User } from './user.entity';
-import { CartItemDto } from '../dto';
+import { CartItemDto } from '@/dto';
 import { ProductVariant } from './product.variant.entity';
 
 @Entity()

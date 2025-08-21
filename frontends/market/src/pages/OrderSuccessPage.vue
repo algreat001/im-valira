@@ -29,7 +29,7 @@ function goHome() {
           Спасибо! Ваш заказ успешно оформлен.
         </p>
         <p v-if="orderId" class="mb-4">
-          Номер заказа: <strong>#{{ orderId }}</strong>
+          Номер заказа: <strong>№ {{ orderId }}</strong>
         </p>
         <v-alert class="mb-4" type="info" variant="tonal">
           Вы можете управлять своими заказами в соответствующем разделе сайта.

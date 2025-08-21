@@ -2,14 +2,14 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsRelations, ILike, Repository } from 'typeorm';
 
-import { CategoryService } from '../category/category.service';
-import { TelegramService } from '../telegram/telegram.service';
+import { CategoryService } from '@/category/category.service';
+import { TelegramService } from '@/telegram/telegram.service';
 
-import { Product } from '../model/product.entity';
-import { User } from '../model/user.entity';
+import { Product } from '@/model/product.entity';
+import { User } from '@/model/user.entity';
 
-import { ProductDto } from '../dto';
-import { SpecMeta, ProductReviewMeta } from '../model/meta';
+import { ProductDto } from '@/dto';
+import { ProductReviewMeta } from '@/model/meta';
 
 @Injectable()
 export class ProductService {
@@ -58,18 +58,6 @@ export class ProductService {
     return true;
   }
 
-  async addToCatalog(catalogId: number, productId: number): Promise<ProductDto> {
-    const catalog = await this.catalogService.getOne(catalogId);
-    const product = await this.getProduct(productId, { categories: true }); // this.productsRepository.findOne({ where: { id: productId }, relations: [ "catalogs" ] });
-    if (!catalog || !product) {
-      throw new BadRequestException();
-    }
-    product.categories.push(catalog);
-    const updateProduct = await this.productsRepository.save(product);
-
-    return updateProduct.dto;
-  }
-
   async getSearchList(search: string): Promise<string[]> {
     const products = await this.productsRepository.find({
       select: [ 'product_id' ],
@@ -95,36 +83,6 @@ export class ProductService {
       throw new BadRequestException();
     }
     return product.dto;
-  }
-
-  async updateProduct(dto: ProductDto): Promise<ProductDto> {
-    let product: Product;
-    if (!dto.product_id) {
-      product = await this.newProductFromDto(dto);
-    } else {
-      product = await this.getProduct(dto.product_id); //await this.productsRepository.findOne({ where: { id: dto.id } });
-      if (!product) {
-        throw new BadRequestException();
-      }
-      product = await this.updateProductFromDto(product, dto);
-    }
-    const resultProduct = await this.productsRepository.save(product);
-    if (!resultProduct) {
-      throw new BadRequestException();
-    }
-    return resultProduct.dto;
-  }
-
-  async deleteProduct(product_id: number): Promise<void> {
-    const product = await this.getProduct(product_id); //await this.productsRepository.findOne({ where: { id } });
-    if (!product) {
-      throw new BadRequestException();
-    }
-    const result = await this.productsRepository.delete({ product_id });
-    if (result.affected === 0) {
-      throw new BadRequestException();
-    }
-    return;
   }
 
   private async getProductForReviewEdit(
@@ -228,82 +186,4 @@ export class ProductService {
     await this.productsRepository.save(product);
   }
 
-  private getKeyAndValue(spec: SpecMeta): [ string, string ] {
-    const key = Object.keys(spec)[0];
-    const value = spec[key];
-    return [ key, value ];
-  }
-
-  async addSpec(
-    id: number,
-    spec: SpecMeta,
-  ): Promise<null | SpecMeta> {
-    const product = await this.getProduct(id);
-    const [ key, value ] = this.getKeyAndValue(spec);
-
-    if (!product.meta.specs) {
-      product.meta.specs = {};
-    }
-
-    product.meta.specs[key] = value;
-
-    const resultProduct = await this.productsRepository.save(product);
-    const specs = resultProduct.meta?.specs;
-    if (!specs || !specs[key] || specs[key] !== value) {
-      throw new BadRequestException();
-    }
-    return spec;
-  }
-
-  async updateSpec(
-    id: number,
-    spec: SpecMeta,
-  ): Promise<null | SpecMeta> {
-    const product = await this.getProduct(id);
-
-    product.meta.specs = spec;
-
-    const resultProduct = await this.productsRepository.save(product);
-    const specs = resultProduct.meta?.specs;
-    if (!specs) {
-      throw new BadRequestException();
-    }
-    return spec;
-  }
-
-  async deleteSpec(
-    id: number,
-    spec: SpecMeta,
-  ): Promise<void> {
-    const product = await this.getProduct(id);
-
-    for (const key in product.meta.specs) {
-      if (product.meta.specs[key] === spec[key]) {
-        delete product.meta.specs[key];
-      }
-    }
-
-    await this.productsRepository.save(product);
-  }
-
-  private async newProductFromDto(source: ProductDto): Promise<Product> {
-    const dest = new Product();
-    return this.updateProductFromDto(dest, source);
-  }
-
-  private async updateProductFromDto(
-    dest: Product,
-    source: ProductDto,
-  ): Promise<Product> {
-    dest.name = source.name;
-    dest.meta = source.meta;
-    if (source.categories) {
-      dest.categories = await Promise.all(
-        source.categories.map(
-          async (category_id) => await this.catalogService.getOne(category_id),
-        ),
-      );
-    }
-    return dest;
-  }
 }

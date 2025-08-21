@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { Product } from './product.entity';
-import { CategoryDto } from '../dto';
+import { CategoryDto } from '@/dto';
 import { CategoryMeta } from './meta';
 
 @Entity()

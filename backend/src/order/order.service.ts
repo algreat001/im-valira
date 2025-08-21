@@ -2,27 +2,35 @@ import { BadRequestException, MethodNotAllowedException, Injectable } from '@nes
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-import { CreateOrderDto, OrderDto, OrderItemDto, UpdateOrderDto } from '../dto';
-import { Cart } from '../model/cart.entity';
-import { Product } from '../model/product.entity';
-import { User } from '../model/user.entity';
-import { Order } from '../model/order.entity';
-import { OrderItem } from '../model/order.item.entity';
-import { CartService } from '../cart/cart.service';
+import { CreateOrderDto, NewOrderDto, OrderDto, OrderItemDto, UpdateOrderDto, UserDto } from '@/dto';
+import { Cart } from '@/model/cart.entity';
+import { User } from '@/model/user.entity';
+import { Order, OrderStatus } from '@/model/order.entity';
+import { OrderItem } from '@/model/order.item.entity';
+import { CartService } from '@/cart/cart.service';
+import { UsersService } from '@/users/users.service';
 
 @Injectable()
 export class OrderService {
   constructor(
     @InjectRepository(Cart)
     private cartRepository: Repository<Cart>,
-    @InjectRepository(Product)
-    private productRepository: Repository<Product>,
     @InjectRepository(Order)
     private orderRepository: Repository<Order>,
     @InjectRepository(OrderItem)
     private orderItemRepository: Repository<OrderItem>,
     private cartService: CartService,
+    private userService: UsersService,
   ) {}
+
+  async findAll(status?: OrderStatus): Promise<OrderDto[]> {
+    const orders = await this.orderRepository.find({
+      where: { status },
+      relations: { user: true, items: true },
+    });
+    return orders.map(item => item.dto);
+
+  }
 
   async findAllByUser(user: User, is_completed: boolean): Promise<OrderDto[]> {
     const orders = await this.orderRepository.find({
@@ -84,15 +92,16 @@ export class OrderService {
     return result.dto;
   }
 
-  findOne(user_id: number, order_id: number): Promise<Order | undefined> {
+  findOneByUserId(user_id: number, order_id: number): Promise<Order | undefined> {
     return this.orderRepository.findOne({
       where: { order_id, user: { user_id } },
       relations: { items: true, user: true },
     });
   }
 
+
   async findItems(user: User, order_id: number): Promise<OrderItemDto[]> {
-    const order = await this.findOne(user.user_id, order_id);
+    const order = await this.findOneByUserId(user.user_id, order_id);
     if (!order) {
       console.log(`[order.findItems] Order item not found id: ${order_id}, user: ${user.email}`);
       throw new BadRequestException();
@@ -100,10 +109,21 @@ export class OrderService {
     return order.items.map(item => item.dto);
   }
 
-  async update(user: User, order_id: number, updateOrderDto: UpdateOrderDto): Promise<OrderDto> {
-    const order = await this.findOne(user.user_id, order_id);
+  async create(newOrderDto: NewOrderDto): Promise<OrderDto> {
+    const user = await this.userService.findUser({ email: newOrderDto.email } as UserDto);
+    if (!user) {
+      console.log(`[order.create] User not found email: ${newOrderDto.email}`);
+      throw new BadRequestException();
+    }
+    const order = Order.fromUser(user);
+    const result = await this.orderRepository.save(order);
+    return result.dto;
+  }
+
+  async update(order_id: number, updateOrderDto: UpdateOrderDto): Promise<OrderDto> {
+    const order = await this.orderRepository.findOne({ where: { order_id }, relations: { items: true, user: true } });
     if (!order) {
-      console.log(`[order.update] Order item not found id: ${order_id}, user: ${user.email}`);
+      console.log(`[order.update] Order item not found id: ${order_id}`);
       throw new BadRequestException();
     }
     Order.updateFromDto(order, updateOrderDto);
@@ -111,14 +131,14 @@ export class OrderService {
     return result.dto;
   }
 
-  async remove(user: User, cart_item_id: number) {
-    const cartItem = await this.findOne(user.user_id, cart_item_id);
-    if (!cartItem) {
-      console.log(`[order.remove] Order item not found id: ${cart_item_id}, user: ${user.email}`);
+  async remove(order_id: number) {
+    const order = await this.orderRepository.findOne({ where: { order_id } });
+    if (!order) {
+      console.log(`[order.remove] Order item not found id: ${order_id}`);
       throw new BadRequestException();
     }
 
-    const result = await this.cartRepository.delete(cart_item_id);
+    const result = await this.cartRepository.delete(order_id);
     return result.affected > 0;
   }
 

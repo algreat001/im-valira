@@ -1,10 +1,9 @@
 import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req, Res, UseGuards } from '@nestjs/common';
-import { ProductDto } from '../dto';
 import { ProductService } from './product.service';
-import { Roles } from '../auth/roles-auth.decorator';
-import { RolesGuard } from '../auth/roles.guard';
-import { SpecMeta, ProductReviewMeta } from '../model/meta';
-import { User } from '../model/user.entity';
+import { Roles } from '@/auth/roles-auth.decorator';
+import { RolesGuard } from '@/auth/roles.guard';
+import { ProductReviewMeta } from '@/model/meta';
+import { User } from '@/model/user.entity';
 
 @Controller('api/v1/product')
 export class ProductController {
@@ -42,18 +41,6 @@ export class ProductController {
   async getSearchProductList(@Res() response, @Param('search') search: string) {
     const findProducts = await this.productService.getSearchList(search);
     return response.status(HttpStatus.OK).json(findProducts);
-  }
-
-  @Roles('Admin', 'Editor')
-  @UseGuards(RolesGuard)
-  @Put('add/:productId/to/:catalogId')
-  async addProductToCatalog(
-    @Res() response,
-    @Param('productId') productId: number,
-    @Param('catalogId') catalogId: number,
-  ) {
-    const updateProduct = await this.productService.addToCatalog(catalogId, productId);
-    return response.status(HttpStatus.OK).json(updateProduct);
   }
 
   @Roles('User')
@@ -95,58 +82,6 @@ export class ProductController {
   ) {
     const user = request.user as User;
     await this.productService.deleteReview(productId, user, review);
-    return response.status(HttpStatus.OK).json(true);
-  }
-
-  @Roles('ProductEditor', 'Admin')
-  @UseGuards(RolesGuard)
-  @Post('/:productId/spec')
-  async addSpec(
-    @Res() response,
-    @Param('productId') productId: number,
-    @Body() spec: SpecMeta,
-  ) {
-    const addReview = await this.productService.addSpec(productId, spec);
-    return response.status(HttpStatus.OK).json(addReview);
-  }
-
-  @Roles('ProductEditor', 'Admin')
-  @UseGuards(RolesGuard)
-  @Put('/:productId/spec')
-  async updateCharacteristic(
-    @Res() response,
-    @Param('productId') productId: number,
-    @Body() spec: SpecMeta,
-  ) {
-    const updateReview = await this.productService.updateSpec(productId, spec);
-    return response.status(HttpStatus.OK).json(updateReview);
-  }
-
-  @Roles('ProductEditor', 'Admin')
-  @UseGuards(RolesGuard)
-  @Delete('/:productId/spec')
-  async deleteCharacteristic(
-    @Res() response,
-    @Param('productId') productId: number,
-    @Body() spec: SpecMeta,
-  ) {
-    await this.productService.deleteSpec(productId, spec);
-    return response.status(HttpStatus.OK).json(true);
-  }
-
-  @Roles('Admin', 'ProductEditor')
-  @UseGuards(RolesGuard)
-  @Put('/')
-  async updateProduct(@Res() response, @Body() dto: ProductDto) {
-    const updateProduct = await this.productService.updateProduct(dto);
-    return response.status(HttpStatus.OK).json(updateProduct);
-  }
-
-  @Roles('Admin', 'ProductEditor')
-  @UseGuards(RolesGuard)
-  @Delete('/:productId')
-  async deleteProduct(@Res() response, @Param() productId: number) {
-    await this.productService.deleteProduct(productId);
     return response.status(HttpStatus.OK).json(true);
   }
 

@@ -4,34 +4,38 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 
 
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+import { AppController } from '@/app.controller';
+import { AppService } from '@/app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { DataSource } from 'typeorm';
 
-import { User } from './model/user.entity';
-import { Role } from './model/role.entity';
-import { Product } from './model/product.entity';
-import { Category } from './model/category.entity';
-import { ProductVariant } from './model/product.variant.entity';
-import { Cart } from './model/cart.entity';
-import { Order } from './model/order.entity';
-import { OrderItem } from './model/order.item.entity';
+import { User } from '@/model/user.entity';
+import { Role } from '@/model/role.entity';
+import { Product } from '@/model/product.entity';
+import { Category } from '@/model/category.entity';
+import { ProductVariant } from '@/model/product.variant.entity';
+import { Cart } from '@/model/cart.entity';
+import { Order } from '@/model/order.entity';
+import { OrderItem } from '@/model/order.item.entity';
 
-import { UsersModule } from './users/users.module';
+import { UsersModule } from '@/users/users.module';
 import { ConfigModule } from '@nestjs/config';
-import { RolesModule } from './roles/roles.module';
-import { AuthModule } from './auth/auth.module';
-import { ProductModule } from './product/product.module';
-import { CategoryModule } from './category/category.module';
-import { CartModule } from './cart/cart.module';
-import { SendModule } from './send/send.module';
-import { ReportService } from './report/report.service';
-import { ReportController } from './report/report.controller';
-import { ReportModule } from './report/report.module';
-import { TelegramModule } from './telegram/telegram.module';
-import { OrderModule } from './order/order.module';
+import { RolesModule } from '@/roles/roles.module';
+import { AuthModule } from '@/auth/auth.module';
+import { ProductModule } from '@/product/product.module';
+import { CategoryModule } from '@/category/category.module';
+import { CartModule } from '@/cart/cart.module';
+import { SendModule } from '@/send/send.module';
+import { ReportService } from '@/report/report.service';
+import { ReportController } from '@/report/report.controller';
+import { ReportModule } from '@/report/report.module';
+import { TelegramModule } from '@/telegram/telegram.module';
+import { OrderModule } from '@/order/order.module';
+import { AdminUsersModule } from '@/admin/users/admin.users.module';
+import { AdminDashboardModule } from '@/admin/dashboard/admin.dashboard.module';
+import { AdminGalleryModule } from '@/admin/gallery/admin.gallery.module';
+import { AdminProductModule } from '@/admin/product/admin.product.module';
 
 
 @Module({
@@ -84,6 +88,10 @@ import { OrderModule } from './order/order.module';
     ReportModule,
     TelegramModule,
     OrderModule,
+    AdminUsersModule,
+    AdminDashboardModule,
+    AdminGalleryModule,
+    AdminProductModule,
   ],
   controllers: [ AppController, ReportController ],
   providers: [ AppService, ReportService ],

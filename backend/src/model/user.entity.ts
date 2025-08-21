@@ -8,12 +8,15 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Role } from './role.entity';
-import { UserDto } from '../dto';
+import { UserDto } from '@/dto';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
   user_id: number;
+
+  @Column({ default: '' })
+  name: string;
 
   @Column()
   firstName: string;
@@ -64,12 +67,20 @@ export class User {
       firstName: this.firstName,
       lastName: this.lastName,
       middleName: this.middleName,
+      name: this.name,
       email: this.email,
       phone: this.phone ?? '',
       postalCode: this.postalCode ?? '',
       deliveryCity: this.deliveryCity ?? '',
       deliveryAddress: this.deliveryAddress ?? '',
       roles: this.roles?.map((role) => role.dto),
+    } as UserDto;
+  }
+
+  get adminDto(): UserDto {
+    return {
+      user_id: this.user_id,
+      ...this.dto,
     } as UserDto;
   }
 

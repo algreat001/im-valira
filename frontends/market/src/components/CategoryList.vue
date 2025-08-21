@@ -39,7 +39,7 @@ const props = defineProps<{ categories: Category[] }>();
             :to="{ path: '/catalog', query: { category: cat.category_id } }"
             router
           >
-            <v-icon size="36" class="mb-1">{{ cat.meta.icon }}</v-icon>
+            <v-icon size="48" class="mb-1">{{ cat.meta.icon }}</v-icon>
             <div class="category-name">{{ cat.name }}</div>
           </v-btn>
         </template>
@@ -48,7 +48,7 @@ const props = defineProps<{ categories: Category[] }>();
   </div>
 </template>
 
-<style scoped lang="sass">
+<style lang="sass">
 @use "@/assets/mixin.sass"
 
 .category-list-scroll
@@ -66,7 +66,7 @@ const props = defineProps<{ categories: Category[] }>();
 
 .category-square
   display: flex
-  flex-direction: column
+  flex-direction: column !important
   align-items: center
   justify-content: center
   width: 110px
@@ -80,6 +80,12 @@ const props = defineProps<{ categories: Category[] }>();
   background: mixin.$card-bg
   cursor: pointer
   @include mixin.card-shadow
+
+  .v-btn__content
+    display: flex
+    flex-direction: column !important
+    align-items: center
+    justify-content: center
 
 .category-name
   margin-top: 4px

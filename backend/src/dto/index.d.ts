@@ -1,7 +1,8 @@
-import { CategoryMeta, OrderMeta, ProductMeta } from '../model/meta';
-import { OrderStatus } from '../model/order.entity';
+import { CategoryMeta, OrderMeta, ProductMeta } from '@/model/meta';
+import { OrderStatus } from '@/model/order.entity';
 
 export interface UserDto {
+  user_id?: number;
   email?: string;
   name?: string;
   firstName?: string;
@@ -19,7 +20,7 @@ export interface UserDto {
 }
 
 export interface CategoryDto {
-  category_id: number;
+  category_id?: number;
   name: string;
   meta: CategoryMeta;
   products?: ProductDto[];
@@ -89,14 +90,20 @@ export type UpdateCartItemDto = {
 
 export type CreateOrderDto = OrderMeta
 
+export interface NewOrderDto {
+  email: string;
+}
+
 export interface OrderDto {
   order_id: number,
   number: string,
   status: OrderStatus,
   is_completed: boolean,
+  is_paid: boolean,
   meta: OrderMeta,
   created_at: string,
   updated_at: string,
+  items?: OrderItemDto[],
 }
 
 export type UpdateOrderDto = Partial<OrderDto>
@@ -118,5 +125,29 @@ export type CreateOrderResponse = {
   paymentToken?: string;
   noPayment?: boolean;
 };
+
+export interface DashboardMetricsDto {
+  pendingOrdersCount: number;
+  unpaidOrdersCount: number;
+  unshippedOrdersCount: number;
+
+  cancelledOrdersThisMonth: number;
+  cancelledOrdersPrevMonth: number;
+
+  paymentsThisMonth: number;
+  paymentsPrevMonth: number;
+
+  productsCount: number;
+  categoriesCount: number;
+
+  usersCount: number;
+  newUsersThisMonth: number;
+
+  refundedOrdersThisMonth: number;
+  ordersThisMonth: number;
+
+  lowStockProductsCount: number;
+}
+
 
 

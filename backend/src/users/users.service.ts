@@ -1,10 +1,10 @@
 import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../model/user.entity';
-import { RoleDto, UserDto } from '../dto';
+import { User } from '@/model/user.entity';
+import { RoleDto, UserDto } from '@/dto';
 import * as bcrypt from 'bcrypt';
 import { Repository } from 'typeorm';
-import { Role } from '../model/role.entity';
+import { Role } from '@/model/role.entity';
 
 export interface Token {
   token: string;

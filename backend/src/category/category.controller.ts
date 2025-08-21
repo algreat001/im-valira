@@ -1,8 +1,9 @@
-import { Controller, HttpStatus, Put, Body, Param, Post, Res, UseGuards, Delete, Get } from '@nestjs/common';
+import { Controller, HttpStatus, Body, Param, Post, Res, UseGuards, Delete, Get } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CategoryDto } from '../dto';
-import { Roles } from '../auth/roles-auth.decorator';
-import { RolesGuard } from '../auth/roles.guard';
+import { CategoryDto } from '@/dto';
+import { Roles } from '@/auth/roles-auth.decorator';
+import { RolesGuard } from '@/auth/roles.guard';
+import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
 @Controller('api/v1/category')
 export class CategoryController {
@@ -12,7 +13,6 @@ export class CategoryController {
   async getAllCategories(@Res() response) {
     const findCategories = await this.categoryService.getAllDto();
     return response.status(HttpStatus.OK).json(findCategories);
-
   }
 
   @Post('/list/:parentCatalogId')
@@ -27,20 +27,16 @@ export class CategoryController {
     return response.status(HttpStatus.OK).json(findCatalogs);
   }
 
-  @Post('/:catalogId')
-  async getOneCategory(@Res() response, @Param('catalogId') catalogId: number) {
-    const findCatalogs = await this.categoryService.getOneDto(catalogId);
-    return response.status(HttpStatus.OK).json(findCatalogs);
-  }
-
+  @UseGuards(JwtAuthGuard)
   @Roles('Admin', 'Editor')
   @UseGuards(RolesGuard)
-  @Put('/')
+  @Post('/save')
   async saveCategory(@Res() response, @Body() dto: CategoryDto) {
     const findCatalogs = await this.categoryService.save(dto);
     return response.status(HttpStatus.OK).json(findCatalogs);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Roles('Admin', 'Editor')
   @UseGuards(RolesGuard)
   @Delete('/:deleteId')

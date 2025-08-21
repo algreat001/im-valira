@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { TelegramService } from '../telegram/telegram.service';
+import { TelegramService } from '@/telegram/telegram.service';
 import { NodeHtmlMarkdown } from 'node-html-markdown';
 
 @Injectable()
@@ -20,7 +20,7 @@ export class SendService {
         .replace('  ', ' ')
         .replace('  ', ' ')
         .replace('  ', ' ')
-        .replace('| ----------------- | --------------------- | ------ | ---------- |','');
+        .replace('| ----------------- | --------------------- | ------ | ---------- |', '');
 
     return (
       await Promise.all([

@@ -77,8 +77,15 @@ export default defineConfig((config: UserConfig) => {
             target: "http://localhost:3010",
             changeOrigin: true,
             secure: false
+          },
+          "/images/gallery": {
+            target: "http://localhost:3010",
+            changeOrigin: true,
+            secure: false
           }
+
         }
+
       }
       : {},
     css: {

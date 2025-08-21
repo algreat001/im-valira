@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Product } from './product.entity';
-import { OrderItemDto } from '../dto';
+import { OrderItemDto } from '@/dto';
 import { Order } from './order.entity';
 import { Cart } from './cart.entity';
 
