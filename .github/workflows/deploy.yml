@@ -1,0 +1,46 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup SSH agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: |
+            ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known_hosts
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
+
+      - name: Make deploy script executable
+        run: chmod +x scripts/deploy.sh
+
+      - name: Run deploy
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+          APP_DIR: ${{ secrets.APP_DIR }}
+          # SSH URL репозитория по умолчанию, можно переопределить через секрет REPO_URL
+          REPO_URL: ${{ secrets.REPO_URL || format('git@github.com:{0}.git', github.repository) }}
+          BRANCH: ${{ github.ref_name }}
+          PM2_APP_NAME: ${{ secrets.PM2_APP_NAME || 'backend-app' }}
+        run: ./scripts/deploy.sh
