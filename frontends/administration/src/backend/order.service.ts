@@ -16,5 +16,5 @@ export async function updateOrder(orderId: number | string, payload: any): Promi
 }
 
 export async function deleteOrder(orderId: number | string): Promise<void> {
-  await apiFetch(`order/admin/${encodeURIComponent(orderId)}`, { method: "DELETE" });
+  await apiFetch(`/order/admin/${encodeURIComponent(orderId)}`, { method: "DELETE" });
 }

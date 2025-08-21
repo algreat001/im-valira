@@ -9,7 +9,7 @@ import type { ProductMeta, SpecMeta } from "@/interfaces/meta";
 import { listCategories } from "@/backend/category.service";
 import type { Category } from "@/interfaces/category";
 
-const model = defineModel<Partial<ProductDto>>({ required: true });
+const model = defineModel<ProductDto>({ required: true });
 
 interface Props {
   loading: boolean;
@@ -80,7 +80,7 @@ onMounted(loadCategories);
       />
     </v-col>
     <v-col cols="12" md="6">
-      <v-text-field v-model.number="(model.meta as any).price"
+      <v-text-field v-model.number="model.meta.price"
                     label="Цена"
                     type="number"
                     density="comfortable"
@@ -90,7 +90,7 @@ onMounted(loadCategories);
     </v-col>
 
     <v-col cols="12">
-      <v-textarea v-model="(model.meta as any).description"
+      <v-textarea v-model="model.meta.description"
                   label="Описание"
                   rows="3"
                   density="comfortable"

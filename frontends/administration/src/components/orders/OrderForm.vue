@@ -2,7 +2,8 @@
 import { computed } from "vue";
 
 import type { OrderDto, OrderStatus } from "@/interfaces/order";
-import { getOrderStatusMeta } from "@/helpers/format.ts";
+import type { DeliveryMeta } from "@/interfaces/meta";
+import { getOrderStatusMeta } from "@/helpers/format";
 
 const model = defineModel<OrderDto>({ required: true });
 
@@ -24,7 +25,7 @@ const statuses: OrderStatus[] = [
   "unknown"
 ];
 
-const delivery = computed<any | undefined>(() => (model.value as any)?.meta?.delivery);
+const delivery = computed<DeliveryMeta | undefined>(() => model.value.meta.delivery);
 </script>
 
 <template>
@@ -133,7 +134,7 @@ const delivery = computed<any | undefined>(() => (model.value as any)?.meta?.del
         <v-card-text>
           <v-row dense>
             <v-col cols="12" md="6">
-              <v-text-field :model-value="delivery?.name"
+              <v-text-field :model-value="delivery.name"
                             label="Получатель"
                             density="comfortable"
                             hide-details
@@ -141,7 +142,7 @@ const delivery = computed<any | undefined>(() => (model.value as any)?.meta?.del
               />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field :model-value="delivery?.phone"
+              <v-text-field :model-value="delivery.phone"
                             label="Телефон"
                             density="comfortable"
                             hide-details
@@ -149,10 +150,10 @@ const delivery = computed<any | undefined>(() => (model.value as any)?.meta?.del
               />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field :model-value="delivery?.city" label="Город" density="comfortable" hide-details readonly />
+              <v-text-field :model-value="delivery.city" label="Город" density="comfortable" hide-details readonly />
             </v-col>
             <v-col cols="12" md="6">
-              <v-text-field :model-value="delivery?.postal_code"
+              <v-text-field :model-value="delivery.postal_code"
                             label="Индекс"
                             density="comfortable"
                             hide-details
@@ -160,7 +161,7 @@ const delivery = computed<any | undefined>(() => (model.value as any)?.meta?.del
               />
             </v-col>
             <v-col cols="12">
-              <v-text-field :model-value="delivery?.address"
+              <v-text-field :model-value="delivery.address"
                             label="Адрес"
                             density="comfortable"
                             hide-details

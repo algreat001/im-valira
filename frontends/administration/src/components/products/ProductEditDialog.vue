@@ -17,7 +17,7 @@ const emit = defineEmits<{
   submit: [ payload: Partial<ProductDto> ];
 }>();
 
-function toForm(p: ProductDto | null): Partial<ProductDto> {
+function toForm(p: ProductDto | null): ProductDto {
   return {
     name: p?.name ?? "",
     categories: p?.categories ?? [],
@@ -32,7 +32,7 @@ function toForm(p: ProductDto | null): Partial<ProductDto> {
   };
 }
 
-const form = ref<Partial<ProductDto>>(toForm(props.product ?? null));
+const form = ref<ProductDto>(toForm(props.product ?? null));
 
 function onCancel() {
   open.value = false;

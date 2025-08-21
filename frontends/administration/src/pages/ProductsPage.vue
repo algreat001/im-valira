@@ -23,7 +23,7 @@ const loading = ref(false);
 const error = ref<string | null>(null);
 const products = ref<ProductDto[]>([]);
 const selectedProductId = ref<number | null>(null);
-const selectedProduct = ref<any>(null);
+const selectedProduct = ref<number[] | null>(null);
 const variants = ref<ProductVariantDto[]>([]);
 
 const productCreateDialog = ref(false);
@@ -69,7 +69,7 @@ function openProductEditDialog(p: ProductDto) {
 }
 
 async function confirmEditProduct(payload: Partial<ProductDto>) {
-  if (!editProductRef.value) {
+  if (!editProductRef.value || !editProductRef.value.product_id) {
     return;
   }
   await updateProduct(editProductRef.value.product_id, payload);
@@ -78,6 +78,9 @@ async function confirmEditProduct(payload: Partial<ProductDto>) {
 }
 
 async function onDeleteProduct(p: ProductDto) {
+  if (!p.product_id) {
+    return;
+  }
   await deleteProduct(p.product_id);
   if (selectedProductId.value === p.product_id) {
     selectedProductId.value = null;
@@ -135,8 +138,13 @@ watch(variantEditDialog, (v) => {
   }
 });
 
-watch(selectedProduct, async (v) => {
-  await onSelectProduct(v?.[0] ?? 0);
+watch(selectedProduct, async (v: number[] | null) => {
+  if (!v || !v[0]) {
+    selectedProductId.value = null;
+    variants.value = [];
+    return;
+  }
+  await onSelectProduct(v[0] ?? 0);
 });
 
 onMounted(loadProducts);

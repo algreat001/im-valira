@@ -7,7 +7,7 @@ export interface ProductVariantDto {
 }
 
 export interface ProductDto {
-  product_id: number;
+  product_id?: number;
   name: string;
   meta: ProductMeta;
 
