@@ -9,7 +9,7 @@ const open = defineModel<boolean>({ required: true });
 interface Props {
   loading: boolean;
   variant: ProductVariantDto | null;
-  productId?: number | string;
+  productId: number | null;
 }
 
 const props = defineProps<Props>();
@@ -58,12 +58,7 @@ watch(open, (val) => {
     <v-card>
       <v-card-title>Редактирование варианта</v-card-title>
       <v-card-text>
-        <variant-form
-          v-model="form"
-          :loading="props.loading"
-          :product-id="props.productId"
-          :variant-id="props.variant?.product_variant_id"
-        />
+        <variant-form v-model="form" :loading="props.loading" />
       </v-card-text>
       <v-card-actions>
         <v-spacer />

@@ -88,7 +88,10 @@ export class Product {
   }
 
   get displayGallery(): string[] {
-    return this.selectedVariant?.meta.gallery || this.gallery || [];
+    if (this.selectedVariant?.meta.gallery && this.selectedVariant?.meta.gallery.length > 0) {
+      return this.selectedVariant.meta.gallery;
+    }
+    return this.gallery || [];
   }
 
   get displaySpecs(): SpecMeta {
