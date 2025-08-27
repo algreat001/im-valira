@@ -14,9 +14,62 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    env:
+      NODE_VERSION: 20
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'yarn'
+
+      - name: Install backend deps
+        working-directory: backend
+        run: yarn install --frozen-lockfile
+
+      - name: Backend lint
+        working-directory: backend
+        run: yarn lint
+
+      - name: Backend tests
+        working-directory: backend
+        run: |
+          yarn test --ci --runInBand
+          yarn test:e2e
+
+      - name: Build backend
+        working-directory: backend
+        run: yarn build
+
+      - name: Install administration deps
+        working-directory: frontends/administration
+        run: yarn install --frozen-lockfile
+
+      - name: Build administration
+        working-directory: frontends/administration
+        run: yarn build
+
+      - name: Install market deps
+        working-directory: frontends/market
+        run: yarn install --frozen-lockfile
+
+      - name: Build market
+        working-directory: frontends/market
+        run: yarn build
+
+      # (Опционально) можно упаковать node_modules backend в tar для ускорения переноса
+      - name: Package backend artifacts
+        run: |
+          tar -czf backend_artifacts.tar.gz backend/dist backend/node_modules backend/package.json backend/package-lock.json backend/yarn.lock || true
+          tar -czf admin_dist.tar.gz -C frontends/administration dist
+          tar -czf market_dist.tar.gz -C frontends/market dist
 
       - name: Setup SSH agent
         uses: webfactory/ssh-agent@v0.9.0
@@ -30,17 +83,56 @@ jobs:
           mkdir -p ~/.ssh
           ssh-keyscan -p "${{ secrets.SSH_PORT }}" "${{ secrets.SSH_HOST }}" >> ~/.ssh/known_hosts
 
-      - name: Make deploy script executable
-        run: chmod +x scripts/deploy.sh
-
-      - name: Run deploy
+      - name: Transfer artifacts
         env:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
           APP_DIR: ${{ secrets.APP_DIR }}
-          # SSH URL репозитория по умолчанию, можно переопределить через секрет REPO_URL
-          REPO_URL: ${{ secrets.REPO_URL || format('git@github.com:{0}.git', github.repository) }}
-          BRANCH: ${{ github.ref_name }}
+        run: |
+          echo "==> Создаю директории на сервере"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "mkdir -p $APP_DIR/backend/dist $APP_DIR/backend/public/admin $APP_DIR/backend/public/market"
+
+          echo "==> Копирую backend (dist, node_modules)"  # переносим архив и распаковываем
+          scp -P "$SSH_PORT" backend_artifacts.tar.gz "$SSH_USER@$SSH_HOST:$APP_DIR/"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cd $APP_DIR && tar -xzf backend_artifacts.tar.gz && rm backend_artifacts.tar.gz"
+
+          echo "==> Копирую administration dist"
+          scp -P "$SSH_PORT" admin_dist.tar.gz "$SSH_USER@$SSH_HOST:$APP_DIR/"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cd $APP_DIR && rm -rf backend/public/admin/* && tar -xzf admin_dist.tar.gz && mv dist/* backend/public/admin/ && rm -rf dist admin_dist.tar.gz"
+
+          echo "==> Копирую market dist"
+          scp -P "$SSH_PORT" market_dist.tar.gz "$SSH_USER@$SSH_HOST:$APP_DIR/"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "cd $APP_DIR && rm -rf backend/public/market/* && tar -xzf market_dist.tar.gz && mv dist/* backend/public/market/ && rm -rf dist market_dist.tar.gz"
+
+      - name: Restart backend service
+        env:
+          SSH_HOST: ${{ secrets.SSH_HOST }}
+          SSH_USER: ${{ secrets.SSH_USER }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
           PM2_APP_NAME: ${{ secrets.PM2_APP_NAME || 'backend-app' }}
-        run: ./scripts/deploy.sh
+          APP_DIR: ${{ secrets.APP_DIR }}
+        run: |
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'bash -s' <<'EOSSH'
+          set -euo pipefail
+          cd "$APP_DIR/backend"
+          echo "==> Перезапуск backend"
+          if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '^backend\.service'; then
+            sudo systemctl restart backend
+            sudo systemctl status backend --no-pager -l || true
+          else
+            if command -v pm2 >/dev/null 2>&1; then
+              if pm2 list | grep -q "$PM2_APP_NAME"; then
+                pm2 restart "$PM2_APP_NAME"
+              else
+                pm2 start "node dist/main" --name "$PM2_APP_NAME"
+              fi
+              pm2 save || true
+            else
+              echo "Внимание: нет systemd unit и pm2. Запустите вручную: node dist/main"
+            fi
+          fi
+          EOSSH
+
+      - name: Done
+        run: echo "Deployment finished successfully."
