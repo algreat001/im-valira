@@ -25,6 +25,7 @@ declare module 'vue' {
     ProductForm: typeof import('./components/products/ProductForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SmartImage: typeof import('./components/bricks/SmartImage.vue')['default']
     SpecsForm: typeof import('./components/products/SpecsForm.vue')['default']
     UserCreateDialog: typeof import('./components/users/UserCreateDialog.vue')['default']
     UserDeleteDialog: typeof import('./components/users/UserDeleteDialog.vue')['default']

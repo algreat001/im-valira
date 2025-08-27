@@ -1,14 +1,18 @@
-const API_BASE: string =
-  (import.meta as any)?.env?.VITE_API_URL ||
-  (import.meta as any)?.env?.VITE_API_BASE ||
-  "/api/v1";
-
 function getToken(): string | null {
   try {
     return localStorage.getItem("auth_token");
   } catch {
     return null;
   }
+}
+
+export function getApiBase() {
+  return (import.meta.env.VITE_API_HOST || "")
+    + (import.meta.env.VITE_API_PREFIX || "/api/v1");
+}
+
+export function getImagesBase() {
+  return (import.meta.env.VITE_IMG_HOST || "");
 }
 
 export async function apiFetch<T = any>(path: string, init: RequestInit = {}): Promise<T> {
@@ -20,7 +24,7 @@ export async function apiFetch<T = any>(path: string, init: RequestInit = {}): P
   if (token) {
     headers.Authorization = `Bearer ${token}`;
   }
-  const response = await fetch(`${API_BASE}${path}`, {
+  const response = await fetch(`${getApiBase()}${path}`, {
     credentials: "include",
     ...init,
     headers

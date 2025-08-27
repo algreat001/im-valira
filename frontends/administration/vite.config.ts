@@ -9,6 +9,7 @@ import VueRouter from "unplugin-vue-router/vite";
 import type { UserConfig } from "vite";
 import { defineConfig } from "vite";
 import { fileURLToPath, URL } from "node:url";
+import fs from "node:fs";
 
 export default defineConfig((config: UserConfig) => {
   const isDev = config.mode === "development";
@@ -70,23 +71,13 @@ export default defineConfig((config: UserConfig) => {
         ".vue"
       ]
     },
-    server: isDev
-      ? {
-        proxy: {
-          "/api/v1": {
-            target: "http://localhost:3010",
-            changeOrigin: true,
-            secure: false
-          },
-          "/images/gallery": {
-            target: "http://localhost:3010",
-            changeOrigin: true,
-            secure: false
-          }
-
-        }
+    server: isDev ? {
+      https: {
+        key: fs.readFileSync("../../cert/localhost.key"),
+        cert: fs.readFileSync("../../cert/localhost.crt")
       }
-      : {},
+    } : {},
+
     css: {
       preprocessorOptions: {
         sass: {

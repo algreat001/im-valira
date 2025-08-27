@@ -4,7 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
-@Controller('api/v1/auth')
+@Controller('auth')
 export class AuthController {
   constructor(
     private readonly authServerice: AuthService,

@@ -28,12 +28,12 @@ async function onLogout() {
 
 <template>
   <v-app>
-    <v-app-bar v-if="route.name !== 'Login'" flat>
+    <v-app-bar v-if="route.name as string !== 'Login'" flat>
       <v-app-bar-title>Админка</v-app-bar-title>
       <v-spacer />
       <v-btn variant="text" prepend-icon="mdi-logout" @click="onLogout">Выйти</v-btn>
     </v-app-bar>
-    <v-navigation-drawer v-if="route.name !== 'Login'" permanent rail>
+    <v-navigation-drawer v-if="route.name as string !== 'Login'" permanent rail>
       <v-list density="compact" nav>
         <v-list-item
           v-for="it in items"

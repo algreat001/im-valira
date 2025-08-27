@@ -53,9 +53,13 @@ import { AdminProductModule } from '@/admin/product/admin.product.module';
       entities: [ User, Role, Product, ProductVariant, Cart, Category, Order, OrderItem ],
       synchronize: true,
     }),
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '..', 'public'),
-    }),
+    // Несколько статических фронтендов: основной (market) и админка (administration)
+    ServeStaticModule.forRoot(
+      {
+        rootPath: join(__dirname, '..', 'public', 'images', 'gallery'),
+        serveRoot: '/images/gallery/',
+        exclude: [ '/api*' ],
+      }),
     MailerModule.forRoot({
       transport: {
         host: 'smtp.yandex.ru',

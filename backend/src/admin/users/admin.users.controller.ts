@@ -16,7 +16,7 @@ import { RolesGuard } from '@/auth/roles.guard';
 
 import { AdminUsersService } from './admin.users.service';
 
-@Controller('api/v1/admin/users')
+@Controller('admin/users')
 export class AdminUsersController {
   constructor(private readonly adminUsersService: AdminUsersService) {}
 

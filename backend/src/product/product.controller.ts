@@ -5,7 +5,7 @@ import { RolesGuard } from '@/auth/roles.guard';
 import { ProductReviewMeta } from '@/model/meta';
 import { User } from '@/model/user.entity';
 
-@Controller('api/v1/product')
+@Controller('product')
 export class ProductController {
   constructor(private productService: ProductService) {
 

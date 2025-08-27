@@ -68,14 +68,12 @@ const srcImage = computed(() => {
 </template>
 
 <style scoped lang="sass">
-@use "@/assets/mixin.sass" as mixin
 
 .smart-image-wrap
   position: relative
   display: flex
   align-items: center
   justify-content: center
-  background: mixin.$card-bg
   overflow: hidden
 
 .smart-image-loader

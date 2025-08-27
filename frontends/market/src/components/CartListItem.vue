@@ -34,7 +34,7 @@ function updateQuantity(id: number, quantity: number) {
         <v-list-item :key="props.item.cart_item_id">
           <template #prepend>
             <v-avatar size="40">
-              <v-img :src="props.item.image" :alt="props.item.name" />
+              <smart-image :width="40" :height="40" :src="props.item.image" :alt="props.item.name" />
             </v-avatar>
           </template>
           <template #title>

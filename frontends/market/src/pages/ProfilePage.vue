@@ -18,7 +18,7 @@ async function onSubmit(payload: any) {
 }
 
 function goToMain() {
-  router.push({ name: "Home" });
+  router.push("/");
 }
 </script>
 

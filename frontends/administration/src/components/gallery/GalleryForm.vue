@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import GallerySelectDialog from "@/components/gallery/GallerySelectDialog.vue";
+import SmartImage from "@/components/bricks/SmartImage.vue";
 
 interface Props {
   title?: string;
@@ -46,7 +47,7 @@ function onRemove(img: string) {
         >
           <template #prepend>
             <v-avatar size="40">
-              <v-img :src="img" alt="thumb" />
+              <smart-image :height="40" :width="40" :src="img" alt="thumb" />
             </v-avatar>
           </template>
           <v-list-item-title>

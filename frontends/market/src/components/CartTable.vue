@@ -25,12 +25,13 @@ function updateQuantity(id: number, quantity: number) {
   cart.updateQuantity(id, quantity);
 }
 
-function remove(id: string) {
+function remove(id: number) {
   cart.removeFromCart(id);
 }
 
 
 const props = defineProps<Props>();
+
 </script>
 
 <template>
@@ -43,7 +44,7 @@ const props = defineProps<Props>();
 
   >
     <template #item.image="{ item }">
-      <v-img :src="item.image" :alt="item.name" max-width="48" width="48" class="mr-2" />
+      <smart-image class="mr-2" :width="48" :height="48" :src="item.image" :alt="item.name" />
     </template>
     <template #item.article="{ item }">
       {{ item.article }}

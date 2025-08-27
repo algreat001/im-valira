@@ -5,7 +5,6 @@ import { constants } from "@/constants.ts";
 
 import type { CategoryDto } from "@/interfaces/categoryDto.ts";
 
-
 type Props = {
   images: string[];
   mainImage: string;

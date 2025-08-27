@@ -12,14 +12,14 @@ initUser();
 async function onSubmit(payload: any) {
   try {
     await auth.register(payload);
-    router.replace({ name: "Profile" });
+    router.replace("/profile");
   } catch {
     // ошибка уже будет доступна в auth.error и показана формой
   }
 }
 
 function onCancel() {
-  router.push({ name: "Home" });
+  router.push("/");
 }
 
 </script>
@@ -39,7 +39,7 @@ function onCancel() {
         />
         <div class="mt-4">
           Уже есть аккаунт?
-          <router-link :to="{ name: 'Login' }">Войти</router-link>
+          <router-link to="/login">Войти</router-link>
         </div>
       </v-card-text>
     </v-card>

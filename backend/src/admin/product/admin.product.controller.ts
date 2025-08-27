@@ -18,7 +18,7 @@ import { RolesGuard } from '@/auth/roles.guard';
 import { AdminProductService } from './admin.product.service';
 import { ProductDto } from '@/dto';
 
-@Controller('api/v1/admin/products')
+@Controller('admin/products')
 export class AdminProductController {
   constructor(private readonly productService: AdminProductService) {}
 

@@ -61,7 +61,7 @@ async function onSubmit() {
         </v-form>
         <div class="mt-4">
           Нет аккаунта?
-          <router-link :to="{ name: 'Register' }">Зарегистрироваться</router-link>
+          <router-link to="/register">Зарегистрироваться</router-link>
         </div>
       </v-card-text>
     </v-card>

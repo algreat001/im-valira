@@ -2,6 +2,7 @@
 import { ref, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useGalleryStore } from "@/stores/gallery";
+import { getImagesBase } from "@/backend/request.service.ts";
 
 const gallery = useGalleryStore();
 const { sortedImages, loading, error } = storeToRefs(gallery);
@@ -66,6 +67,18 @@ async function doUpload() {
   uploadFiles.value = null;
 }
 
+function copyToClipboard(text: string) {
+  navigator.clipboard?.writeText(text);
+}
+
+function srcPath(src: string) {
+  if (src.startsWith("http")) {
+    return src;
+  }
+  return `${getImagesBase()}${src}`;
+}
+
+
 onMounted(gallery.load);
 </script>
 
@@ -119,7 +132,7 @@ onMounted(gallery.load);
                 lg="3"
               >
                 <v-card>
-                  <v-img :src="img" aspect-ratio="1" cover />
+                  <smart-image :src="img" :alt="img" />
                   <v-card-subtitle class="text-truncate" :title="img">
                     {{ img }}
                   </v-card-subtitle>
@@ -132,11 +145,11 @@ onMounted(gallery.load);
                            :disabled="loading"
                     />
                     <v-spacer />
-                    <v-btn icon="mdi-open-in-new" variant="text" :href="img" target="_blank" />
+                    <v-btn icon="mdi-open-in-new" variant="text" :href="srcPath(img)" target="_blank" />
                     <v-btn
                       icon="mdi-content-copy"
                       variant="text"
-                      @click="() => { navigator.clipboard?.writeText(img); }"
+                      @click="() => copyToClipboard(img)"
                     />
                   </v-card-actions>
                 </v-card>
