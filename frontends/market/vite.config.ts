@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
   console.log("Vite is running in", mode, "mode");
   console.log("API prefix:", env.VITE_API_PREFIX);
   console.log("API host:", env.VITE_API_HOST);
-  console.log("Verson:", process.env.npm_package_version);
+  console.log("Version:", process.env.npm_package_version);
 
   // const apiHost = env.VITE_API_HOST || env.VITE_API_URL || ""; // хост может быть пустым => относительные запросы
   // const apiPrefix = env.VITE_API_PREFIX || "/api/v1";
