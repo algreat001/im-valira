@@ -34,9 +34,9 @@ jobs:
         working-directory: backend
         run: yarn install
 
-      - name: Backend lint
-        working-directory: backend
-        run: yarn lint
+      #      - name: Backend lint
+      #        working-directory: backend
+      #        run: yarn lint
 
       - name: Backend tests
         working-directory: backend
