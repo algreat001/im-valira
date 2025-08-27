@@ -1,12 +1,17 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SendController } from './send.controller';
+import { TelegramModule } from '@/telegram/telegram.module';
+import { SendService } from '@/send/send.service';
+import { RootTestModule } from '@/test/root-test.module';
 
 describe('SendController', () => {
   let controller: SendController;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      controllers: [SendController],
+      imports: [ RootTestModule, TelegramModule ],
+      controllers: [ SendController ],
+      providers: [ SendService ],
     }).compile();
 
     controller = module.get<SendController>(SendController);
