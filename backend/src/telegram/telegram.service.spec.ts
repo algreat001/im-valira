@@ -1,12 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { TelegramService } from './telegram.service';
+import { TelegramService } from '@/telegram/telegram.service';
 
 describe('TelegramService', () => {
   let service: TelegramService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [TelegramService],
+      providers: [ TelegramService ],
     }).compile();
 
     service = module.get<TelegramService>(TelegramService);

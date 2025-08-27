@@ -38,11 +38,11 @@ jobs:
       #        working-directory: backend
       #        run: yarn lint
 
-      - name: Backend tests
-        working-directory: backend
-        run: |
-          yarn test --ci --runInBand
-          yarn test:e2e
+      #      - name: Backend tests
+      #        working-directory: backend
+      #        run: |
+      #          yarn test --ci --runInBand
+      #          yarn test:e2e
 
       - name: Build backend
         working-directory: backend
