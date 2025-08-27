@@ -12,7 +12,7 @@ import { RolesGuard } from '@/auth/roles.guard';
 
 import { AdminDashboardService } from './admin.dashboard.service';
 
-@Controller('api/v1/admin/dashboard')
+@Controller('admin/dashboard')
 export class AdminDashboardController {
   constructor(private readonly adminDashboardService: AdminDashboardService) {}
 

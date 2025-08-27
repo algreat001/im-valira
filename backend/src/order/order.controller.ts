@@ -7,7 +7,7 @@ import { CreateOrderDto, NewOrderDto, UpdateOrderDto } from '@/dto';
 import { OrderStatus } from '@/model/order.entity';
 
 
-@Controller('api/v1/order')
+@Controller('order')
 export class OrderController {
   constructor(private readonly orderService: OrderService) {}
 

@@ -66,10 +66,10 @@ export class Cart {
     cart.user = user;
     cart.product = product;
     cart.quantity = quantity;
-    cart.article = variant?.meta.article ?? product.meta?.article ?? undefined;
-    cart.name = variant?.name ?? product.name;
+    cart.article = (variant.meta?.article || product.meta?.article) ?? undefined;
+    cart.name = variant?.name || product.name;
     cart.price = variant?.meta.price ?? product.meta?.price ?? 0;
-    cart.image = variant?.meta.image ?? product.meta?.image ?? '';
+    cart.image = (variant.meta?.image || product.meta?.image) ?? '';
     cart.variant_id = variant?.product_variant_id ?? undefined;
     return cart;
   }

@@ -13,10 +13,10 @@ interface Props {
 const props = defineProps<Props>();
 
 const emit = defineEmits<{
-  submit: [ payload: Partial<ProductDto> ];
+  submit: [ payload: ProductDto ];
 }>();
 
-function getDefaultForm(): Partial<ProductDto> {
+function getDefaultForm(): ProductDto {
   return {
     name: "",
     categories: [],
@@ -31,7 +31,7 @@ function getDefaultForm(): Partial<ProductDto> {
   };
 }
 
-const form = ref<Partial<ProductDto>>(getDefaultForm());
+const form = ref<ProductDto>(getDefaultForm());
 
 function onCancel() {
   open.value = false;

@@ -5,7 +5,7 @@ import { Roles } from '@/auth/roles-auth.decorator';
 import { RolesGuard } from '@/auth/roles.guard';
 import { JwtAuthGuard } from '@/auth/jwt-auth.guard';
 
-@Controller('api/v1/category')
+@Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}
 

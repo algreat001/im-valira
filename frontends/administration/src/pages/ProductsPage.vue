@@ -180,10 +180,12 @@ onMounted(loadProducts);
         >
           <template #item.thumb="{ item }">
             <v-avatar size="40" rounded="lg">
-              <v-img
+              <smart-image
                 v-if="item.meta?.image || (item.meta?.gallery && item.meta.gallery[0])"
                 :src="item.meta?.image || item.meta?.gallery?.[0]"
-                cover
+                :alt="item.meta?.image || item.meta?.gallery?.[0]"
+                :width="40"
+                :height="40"
               />
               <v-icon v-else icon="mdi-image-off" />
             </v-avatar>

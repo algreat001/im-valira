@@ -22,7 +22,7 @@ import { AdminGalleryService } from './admin.gallery.service';
 
 const GALLERY_DIR = path.join(process.cwd(), 'public', 'images', 'gallery');
 
-@Controller('api/v1/admin/gallery')
+@Controller('admin/gallery')
 export class AdminGalleryController {
   constructor(private readonly galleryService: AdminGalleryService) {}
 

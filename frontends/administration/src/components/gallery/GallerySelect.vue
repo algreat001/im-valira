@@ -2,6 +2,7 @@
 import { ref, computed, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGalleryStore } from "@/stores/gallery";
+import SmartImage from "@/components/bricks/SmartImage.vue";
 
 interface Props {
   multiple?: boolean;
@@ -23,7 +24,9 @@ const query = ref("");
 
 const filtered = computed(() => {
   const q = query.value.trim().toLowerCase();
-  if (!q) return sortedImages.value;
+  if (!q) {
+    return sortedImages.value;
+  }
   return sortedImages.value.filter((x) => x.toLowerCase().includes(q));
 });
 
@@ -94,7 +97,8 @@ onMounted(() => {
           elevation="1"
           @click="toggle(img)"
         >
-          <v-img :src="img" aspect-ratio="1" cover />
+          <smart-image :src="img" :alt="img" />
+
           <div class="gallery-card__footer d-flex align-center px-3 py-2">
             <v-icon
               :icon="isSelected(img) ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
@@ -115,8 +119,10 @@ onMounted(() => {
   cursor: pointer
   border: 1px solid transparent
   transition: border-color .15s ease, box-shadow .15s ease
+
   &__footer
     background: rgba(var(--v-theme-surface-variant), .5)
+
   &--selected
     border-color: rgb(var(--v-theme-primary))
 </style>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ProductParameter, ProductParameterId } from "@/interfaces/productParameter.ts";
+import type { ProductParameter } from "@/interfaces/productParameter.ts";
 import type { Product } from "@/helpers/product.ts";
 import { productParameters } from "@/data/products.ts";
 
@@ -9,9 +9,9 @@ interface Props {
 
 const props = defineProps<Props>();
 
-function getParameterName(id: ProductParameterId): string {
+function getParameterName(id: string | number): string {
   const param = productParameters.find((p: ProductParameter) => p.product_parameter_id === id);
-  return param ? param.name : id;
+  return param ? param.name : id as string;
 }
 </script>
 
