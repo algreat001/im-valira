@@ -20,8 +20,6 @@ export default defineConfig(({ mode }) => {
   console.log("API host:", env.VITE_API_HOST);
   console.log("Version:", process.env.npm_package_version);
 
-  // const apiHost = env.VITE_API_HOST || env.VITE_API_URL || ""; // хост может быть пустым => относительные запросы
-  // const apiPrefix = env.VITE_API_PREFIX || "/api/v1";
   const base = env.VITE_PUBLIC_BASE || "/";
 
   return {
