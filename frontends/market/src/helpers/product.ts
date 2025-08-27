@@ -239,12 +239,4 @@ export class Product {
       });
     });
   }
-
-  // static withVariant(product: IProduct, variantId?: string): Product {
-  //   const instance = new Product(product);
-  //   if (variantId) {
-  //     instance.setSelectedVariant(variantId);
-  //   }
-  //   return instance;
-  // }
 }

@@ -51,7 +51,6 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       __APP_VERSION__: JSON.stringify(process.env.npm_package_version)
-      // __API_PREFIX__: JSON.stringify(apiPrefix)
     },
     resolve: {
       alias: { "@": fileURLToPath(new URL("src", import.meta.url)) },
