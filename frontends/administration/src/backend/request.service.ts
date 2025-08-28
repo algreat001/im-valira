@@ -7,12 +7,11 @@ function getToken(): string | null {
 }
 
 export function getApiBase() {
-  return (import.meta.env.VITE_API_HOST || "")
-    + (import.meta.env.VITE_API_PREFIX || "/api/v1");
+  return (import.meta.env.VITE_API_HOST || "") + (import.meta.env.VITE_API_PREFIX || "/api/v1");
 }
 
-export function getImagesBase() {
-  return (import.meta.env.VITE_IMG_HOST || "");
+export function getImagesBase(forApi = false): string {
+  return (import.meta.env.VITE_IMG_HOST || "") + (forApi ? (import.meta.env.VITE_API_PREFIX || "/api/v1") : "");
 }
 
 
@@ -58,7 +57,7 @@ export async function apiFetchFile<T = any>(
     delete (headers as any)["Content-Type"];
   }
 
-  const response = await fetch(`${getImagesBase()}${path}`, {
+  const response = await fetch(`${getImagesBase(true)}${path}`, {
     credentials: "include",
     method: init.method ?? "POST",
     ...init,
