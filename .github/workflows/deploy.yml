@@ -129,18 +129,14 @@ jobs:
           echo "[remote] Working dir: $(pwd)"
           echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
           
-          if command -v pm2 >/dev/null 2>&1; then
-            if pm2 list | grep -q "$PM2_APP_NAME"; then
-              echo '[remote] PM2 процесс найден — restart'
-              pm2 restart "$PM2_APP_NAME"
-            else
-              echo '[remote] PM2 процесс не найден — start'
-              pm2 start "yarn start:prod" --name "$PM2_APP_NAME"
-            fi
-            pm2 save || true
+          if pm2 list | grep -q "$PM2_APP_NAME"; then
+            echo '[remote] PM2 процесс найден — restart'
+            pm2 restart "$PM2_APP_NAME"
           else
-            echo '[remote] Нет PM2 — запустите вручную: node dist/main'
+            echo '[remote] PM2 процесс не найден — start'
+            pm2 start "yarn start:prod" --name "$PM2_APP_NAME"
           fi
+          pm2 save || true
           EOSSH
 
       - name: Done
