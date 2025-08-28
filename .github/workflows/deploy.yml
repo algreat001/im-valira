@@ -110,26 +110,40 @@ jobs:
           SSH_HOST: ${{ secrets.SSH_HOST }}
           SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
-          PM2_APP_NAME: ${{ secrets.PM2_APP_NAME || 'backend-app' }}
+          PM2_APP_NAME: ${{ secrets.PM2_APP_NAME }}
           APP_DIR: ${{ secrets.APP_DIR }}
         run: |
-          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" 'bash -s' <<'EOSSH'
+          : "Проверка обязательных переменных"
+          [ -n "$APP_DIR" ] || { echo 'APP_DIR secret not set'; exit 1; }
+          [ -n "$SSH_HOST" ] || { echo 'SSH_HOST secret not set'; exit 1; }
+          [ -n "$SSH_USER" ] || { echo 'SSH_USER secret not set'; exit 1; }
+          [ -n "$SSH_PORT" ] || { echo 'SSH_PORT secret not set'; exit 1; }
+          if [ -z "$PM2_APP_NAME" ]; then PM2_APP_NAME=backend-app; fi
+          echo "==> Restarting backend on remote host"
+          ssh -p "$SSH_PORT" "$SSH_USER@$SSH_HOST" "APP_DIR='$APP_DIR' PM2_APP_NAME='$PM2_APP_NAME' bash -s" <<'EOSSH'
           set -euo pipefail
-          cd "$APP_DIR/backend"
-          echo "==> Перезапуск backend"
+          : "Fallback значений (на случай если не передались)"
+          : "${APP_DIR:=/var/www/node/valira}"
+          : "${PM2_APP_NAME:=backend-app}"
+          cd "$APP_DIR/backend" || { echo "Directory $APP_DIR/backend not found"; exit 2; }
+          echo "[remote] Working dir: $(pwd)"
+          echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
           if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files | grep -q '^backend\.service'; then
+            echo '[remote] systemd unit backend.service найден — restart'
             sudo systemctl restart backend
             sudo systemctl status backend --no-pager -l || true
           else
             if command -v pm2 >/dev/null 2>&1; then
               if pm2 list | grep -q "$PM2_APP_NAME"; then
+                echo '[remote] PM2 процесс найден — restart'
                 pm2 restart "$PM2_APP_NAME"
               else
+                echo '[remote] PM2 процесс не найден — start'
                 pm2 start "node dist/main" --name "$PM2_APP_NAME"
               fi
               pm2 save || true
             else
-              echo "Внимание: нет systemd unit и pm2. Запустите вручную: node dist/main"
+              echo '[remote] Нет systemd unit и PM2 — запустите вручную: node dist/main'
             fi
           fi
           EOSSH
