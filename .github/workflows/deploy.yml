@@ -131,6 +131,7 @@ jobs:
           echo $PATH
           whoami
           node --version
+          nvm use 24
           pm2 --version
           command -v pm2
           if pm2 list | grep -q "$PM2_APP_NAME"; then
