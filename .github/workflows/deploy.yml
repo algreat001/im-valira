@@ -128,10 +128,8 @@ jobs:
           cd "$APP_DIR/backend" || { echo "Directory $APP_DIR/backend not found"; exit 2; }
           echo "[remote] Working dir: $(pwd)"
           echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
-          
           echo $PATH
           command -v pm2
-          
           if pm2 list | grep -q "$PM2_APP_NAME"; then
             echo '[remote] PM2 процесс найден — restart'
             pm2 restart "$PM2_APP_NAME"
