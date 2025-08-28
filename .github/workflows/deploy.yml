@@ -129,7 +129,9 @@ jobs:
           echo "[remote] Working dir: $(pwd)"
           echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
           echo $PATH
-          hostnamectl
+          whoami
+          node --version
+          pm2 --version
           command -v pm2
           if pm2 list | grep -q "$PM2_APP_NAME"; then
             echo '[remote] PM2 процесс найден — restart'
