@@ -129,7 +129,7 @@ jobs:
           echo "[remote] Working dir: $(pwd)"
           echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
           echo $PATH
-          whoami
+          id
           node --version
           nvm use 24
           pm2 --version
