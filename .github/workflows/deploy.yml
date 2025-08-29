@@ -128,12 +128,8 @@ jobs:
           cd "$APP_DIR/backend" || { echo "Directory $APP_DIR/backend not found"; exit 2; }
           echo "[remote] Working dir: $(pwd)"
           echo "[remote] Перезапуск backend (APP_DIR=$APP_DIR PM2_APP_NAME=$PM2_APP_NAME)"
-          echo $PATH
-          id
-          node --version
           \. "$HOME/.nvm/nvm.sh"
           nvm use 24
-          pm2 --version
           command -v pm2
           if pm2 list | grep -q "$PM2_APP_NAME"; then
             echo '[remote] PM2 процесс найден — restart'
