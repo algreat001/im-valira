@@ -131,6 +131,7 @@ jobs:
           echo $PATH
           id
           node --version
+          \. "$HOME/.nvm/nvm.sh"
           nvm use 24
           pm2 --version
           command -v pm2
