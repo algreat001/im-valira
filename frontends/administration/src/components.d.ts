@@ -8,6 +8,10 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    BannerCreateDialog: typeof import('./components/banner/BannerCreateDialog.vue')['default']
+    BannerDeleteDialog: typeof import('./components/banner/BannerDeleteDialog.vue')['default']
+    BannerEditDialog: typeof import('./components/banner/BannerEditDialog.vue')['default']
+    BannerForm: typeof import('./components/banner/BannerForm.vue')['default']
     CategoryCreateDialog: typeof import('./components/categories/CategoryCreateDialog.vue')['default']
     CategoryEditDialog: typeof import('./components/categories/CategoryEditDialog.vue')['default']
     CategoryForm: typeof import('./components/categories/CategoryForm.vue')['default']

@@ -50,6 +50,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: "Галерея", requiresAuth: true }
   },
   {
+    path: "/banners",
+    name: "Banners",
+    component: () => import("@/pages/BannerPage.vue"),
+    meta: { title: "Баннеры", requiresAuth: true }
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "AdminNotFound",
     component: () => import("@/pages/NotFound.vue"),

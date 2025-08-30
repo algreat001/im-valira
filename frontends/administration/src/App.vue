@@ -14,6 +14,7 @@ const items = computed(() => [
   { title: "Пользователи", to: { name: "Users" }, icon: "mdi-account-multiple-outline" },
   { title: "Категории", to: { name: "Categories" }, icon: "mdi-format-list-bulleted" },
   { title: "Товары", to: { name: "Products" }, icon: "mdi-cube-outline" },
+  { title: "Баннеры", to: { name: "Banners" }, icon: "mdi-view-carousel" },
   { title: "Галерея", to: { name: "Gallery" }, icon: "mdi-image-multiple-outline" },
   { title: "Заказы", to: { name: "Orders" }, icon: "mdi-receipt-text-outline" }
 ]);
