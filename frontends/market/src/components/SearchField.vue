@@ -16,6 +16,7 @@ function onSearch() {
   if (search.value.trim()) {
     emit("search", search.value);
     searchFocused.value = false;
+    search.value = "";
   }
 }
 

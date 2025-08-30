@@ -2,7 +2,7 @@
 import { useRoute, useRouter } from "vue-router";
 import { ref, computed, watch } from "vue";
 
-import { constants } from "../constants";
+import { constants } from "@/constants";
 import { type Category, useCategoriesStore } from "@/stores/categories";
 
 import ProductList from "@/components/Product/ProductList.vue";
@@ -28,7 +28,25 @@ const categoryIdFromQuery = computed(() => {
 });
 
 
-const search = ref<string>(route.query.q as string || "");
+const search = computed({
+  get: () => (route.query.q as string) || "",
+  set: (val: string) => {
+    const current = (route.query.q as string) || "";
+    const next = (val || "").trim();
+    if (current === next) {
+      return;
+    } // избегаем лишнего replace
+    const newQuery: Record<string, any> = { ...route.query };
+    if (next) {
+      newQuery.q = next;
+    } else {
+      delete newQuery.q;
+    }
+    // при смене поиска сбрасываем страницу на 1 (page watcher уже это сделает, но можно явно)
+    delete newQuery.page; // убрать старую страницу
+    router.replace({ query: newQuery });
+  }
+});
 const selectedCategory = ref<Category | undefined>(undefined);
 const sort = ref(constants.catalog.sortOptions[0]);
 

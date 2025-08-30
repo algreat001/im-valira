@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  rootDir: 'src',
+  rootDir: '../src',
   testEnvironment: 'node',
   moduleFileExtensions: [ 'ts', 'js', 'json' ],
   testRegex: '.*\\.spec\\.ts$',
