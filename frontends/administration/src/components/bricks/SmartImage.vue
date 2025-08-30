@@ -30,7 +30,6 @@ function handleImageLoadStart() {
 }
 
 const srcImage = computed(() => {
-    console.log("srcImage", `${getImagesBase()}${props.src}`);
     if (props.src.startsWith("http")) {
       return props.src;
     }
