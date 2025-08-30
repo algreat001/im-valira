@@ -18,6 +18,7 @@ import { ProductVariant } from '@/model/product.variant.entity';
 import { Cart } from '@/model/cart.entity';
 import { Order } from '@/model/order.entity';
 import { OrderItem } from '@/model/order.item.entity';
+import { Banner } from '@/model/banner.entity';
 
 import { UsersModule } from '@/users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -36,6 +37,8 @@ import { AdminUsersModule } from '@/admin/users/admin.users.module';
 import { AdminDashboardModule } from '@/admin/dashboard/admin.dashboard.module';
 import { AdminGalleryModule } from '@/admin/gallery/admin.gallery.module';
 import { AdminProductModule } from '@/admin/product/admin.product.module';
+import { BannerModule } from '@/banner/banner.module';
+import { AdminBannerModule } from '@/admin/banner/admin.banner.module';
 
 
 @Module({
@@ -50,7 +53,7 @@ import { AdminProductModule } from '@/admin/product/admin.product.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [ User, Role, Product, ProductVariant, Cart, Category, Order, OrderItem ],
+      entities: [ User, Role, Product, ProductVariant, Cart, Category, Order, OrderItem, Banner ],
       synchronize: true,
     }),
     // Несколько статических фронтендов: основной (market) и админка (administration)
@@ -81,7 +84,7 @@ import { AdminProductModule } from '@/admin/product/admin.product.module';
         },
       },
     }),
-    TypeOrmModule.forFeature([ User, Role, Product, Category, Cart, ProductVariant, Order, OrderItem ]),
+    TypeOrmModule.forFeature([ User, Role, Product, Category, Cart, ProductVariant, Order, OrderItem, Banner ]),
     UsersModule,
     RolesModule,
     AuthModule,
@@ -96,6 +99,8 @@ import { AdminProductModule } from '@/admin/product/admin.product.module';
     AdminDashboardModule,
     AdminGalleryModule,
     AdminProductModule,
+    BannerModule,
+    AdminBannerModule,
   ],
   controllers: [ AppController, ReportController ],
   providers: [ AppService, ReportService ],

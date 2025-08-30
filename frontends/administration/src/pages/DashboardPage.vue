@@ -43,6 +43,7 @@ onMounted(dashboard.load);
                 <v-btn color="primary" to="/products">Товары</v-btn>
                 <v-btn color="primary" to="/orders">Заказы</v-btn>
                 <v-btn color="primary" to="/gallery">Галерея</v-btn>
+                <v-btn color="primary" to="/banners">Баннеры</v-btn>
               </v-row>
             </v-col>
           </v-card-text>
