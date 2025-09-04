@@ -60,12 +60,12 @@ export class Product {
     product.name = dto.name;
     product.meta = dto.meta;
     if (!!categories) {
-      product.categories = dto.categories.map(
+      product.categories = (dto.categories ?? []).map(
         (catId) => categories.find(cat => cat.category_id === catId),
       ).filter(Boolean) as Category[];
     }
     if (!!tags) {
-      product.tags = dto.tags.map(
+      product.tags = (dto.tags ?? []).map(
         (tagName) => tags.find(tag => tag.link === tagName),
       ).filter(Boolean) as Tag[];
     }
