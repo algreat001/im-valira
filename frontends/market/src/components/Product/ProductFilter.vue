@@ -1,33 +1,39 @@
 <script setup lang="ts">
-import { debounce } from "@/helpers/debounce";
+import { onMounted, computed } from "vue";
 import { constants } from "@/constants";
-import type { Category } from "@/stores/categories.ts";
+import { type Category, useCategoriesStore } from "@/stores/categories.ts";
 
 interface ProductFilterProps {
-  categories: Category[];
 }
 
 const searchCategory = defineModel<Category>("selected-category");
 const sort = defineModel<string>("sort");
 const search = defineModel<string>("search");
 
-
 const props = defineProps<ProductFilterProps>();
 
+const catStore = useCategoriesStore();
+
+onMounted(() => {
+  catStore.loadCategories();
+});
+
+const categoryOptions = computed(() => catStore.categories);
 
 </script>
 
 <template>
-  <v-row class="mb-4">
+  <v-row class="mb-4" dense>
     <v-col cols="12" md="3">
       <v-select
         v-model="searchCategory"
-        :items="[constants.catalog.defaultCategory, ...props.categories]"
+        :items="[constants.catalog.defaultCategory, ...categoryOptions]"
         item-title="name"
-        item-value="id"
+        item-value="category_id"
         label="Категория"
         density="compact"
         return-object
+        hide-details
       />
     </v-col>
     <v-col cols="12" md="3">
@@ -36,6 +42,7 @@ const props = defineProps<ProductFilterProps>();
         :items="constants.catalog.sortOptions"
         label="Сортировка"
         density="compact"
+        hide-details
       />
     </v-col>
     <v-col cols="12" md="6">
@@ -44,6 +51,7 @@ const props = defineProps<ProductFilterProps>();
         label="Поиск"
         density="compact"
         clearable
+        hide-details
       />
     </v-col>
   </v-row>

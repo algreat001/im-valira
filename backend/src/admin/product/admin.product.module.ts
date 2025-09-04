@@ -2,6 +2,7 @@ import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/model/user.entity';
 import { Role } from '@/model/role.entity';
+import { Tag } from '@/model/tag.entity';
 import { RolesModule } from '@/roles/roles.module';
 import { AuthModule } from '@/auth/auth.module';
 import { UsersModule } from '@/users/users.module';
@@ -14,7 +15,7 @@ import { ProductVariant } from '@/model/product.variant.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([ User, Product, ProductVariant, Category, Role ]),
+    TypeOrmModule.forFeature([ User, Product, ProductVariant, Category, Tag, Role ]),
     forwardRef(() => RolesModule),
     forwardRef(() => AuthModule),
     forwardRef(() => UsersModule),

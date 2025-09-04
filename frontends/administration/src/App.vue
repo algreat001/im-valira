@@ -15,6 +15,7 @@ const items = computed(() => [
   { title: "Категории", to: { name: "Categories" }, icon: "mdi-format-list-bulleted" },
   { title: "Товары", to: { name: "Products" }, icon: "mdi-cube-outline" },
   { title: "Баннеры", to: { name: "Banners" }, icon: "mdi-view-carousel" },
+  { title: "Теги", to: { name: "Tags" }, icon: "mdi-tag-multiple-outline" },
   { title: "Галерея", to: { name: "Gallery" }, icon: "mdi-image-multiple-outline" },
   { title: "Заказы", to: { name: "Orders" }, icon: "mdi-receipt-text-outline" }
 ]);

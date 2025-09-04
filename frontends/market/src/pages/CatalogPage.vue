@@ -50,6 +50,12 @@ const search = computed({
 const selectedCategory = ref<Category | undefined>(undefined);
 const sort = ref(constants.catalog.sortOptions[0]);
 
+const tagFromQuery = computed(() => {
+  const t = route.query.tag as string | undefined;
+  return (t && t.trim().length > 0) ? t : undefined;
+});
+
+
 watch(
   [ () => categoryIdFromQuery.value, () => useCategoriesStore().categories ],
   ([ catId ]) => {
@@ -72,7 +78,8 @@ watch(selectedCategory, (cat) => {
 });
 
 
-watch([ search, selectedCategory, sort ], () => { page.value = 1; });
+watch([ search, selectedCategory, tagFromQuery, sort ], () => { page.value = 1; });
+watch([ search, selectedCategory, sort ], () => { router.replace({ query: { ...route.query, tag: undefined } }); });
 watch(page, () => { router.replace({ query: { ...route.query, page: page.value } }); });
 
 </script>
@@ -80,13 +87,13 @@ watch(page, () => { router.replace({ query: { ...route.query, page: page.value }
 <template>
   <v-container class="py-8 fade-in">
     <product-filter
-      :categories="useCategoriesStore().categories"
       v-model:selected-category="selectedCategory"
       v-model:sort="sort"
       v-model:search="search"
     />
+    <v-divider class="my-6" />
     <product-list
-      :products="useProductsStore().getFilteredProduct(search, selectedCategory, sort)"
+      :products="useProductsStore().getFilteredProduct(search, selectedCategory, tagFromQuery, sort)"
       :width="width"
       :height="height"
       v-model:page="page"

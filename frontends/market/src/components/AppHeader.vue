@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
-
 import SearchField from "@/components/SearchField.vue";
 import UserMenu from "@/components/UserMenu.vue";
 import CartMiniButton from "@/components/CartMiniButton.vue";
+import AppLogo from "@/components/AppLogo.vue"; // новый компонент
 
 const router = useRouter();
 </script>
@@ -11,9 +11,7 @@ const router = useRouter();
 <template>
   <v-app-bar color="primary" dark :elevation="2">
     <v-container class="d-flex align-center justify-space-between">
-      <router-link to="/">
-        <v-avatar image="@/assets/logo256.png" size="40" />
-      </router-link>
+      <app-logo />
       <div class="d-flex align-center">
         <search-field @search="val => router.push({ path: '/catalog', query: { q: val } })" />
         <user-menu class="ml-2" />
@@ -24,5 +22,5 @@ const router = useRouter();
 </template>
 
 <style scoped lang="sass">
-
+/* Стили перенесены в AppLogo.vue, локально ничего не требуется */
 </style>

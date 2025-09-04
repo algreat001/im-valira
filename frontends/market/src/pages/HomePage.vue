@@ -9,8 +9,10 @@ import ProductList from "@/components/Product/ProductList.vue";
 import { useProductsStore } from "@/stores/products.ts";
 import { useCategoriesStore } from "@/stores/categories.ts";
 
-const newProducts = useProductsStore().newProducts;
 const page = ref(1);
+const list = [
+  { name: "Новые товары", tag: "new" }
+];
 
 
 </script>
@@ -27,10 +29,10 @@ const page = ref(1);
         <category-list :categories="useCategoriesStore().categories" />
       </v-col>
       <v-divider class="my-6" />
-      <v-col cols="12" md="12">
-        <h2 class="mt-8 mb-4">Новые товары</h2>
+      <v-col cols="12" md="12" v-for="item in list" :key="item.tag">
+        <h2 class="mt-8 mb-4">{{ item.name }}</h2>
         <product-list
-          :products="newProducts"
+          :products="useProductsStore().getTagProducts(item.tag)"
           :width="constants.ui.productList.width"
           :height="constants.ui.productList.height"
           v-model:page="page"

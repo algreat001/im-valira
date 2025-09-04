@@ -14,6 +14,7 @@ export class Product {
   description: string;
   specs: SpecMeta;
   variants?: ProductVariantDto[];
+  tags: string[] = []; // добавлено
 
   private selectedVariantId: undefined | number = undefined;
 
@@ -28,6 +29,7 @@ export class Product {
     this.description = data.meta.description;
     this.specs = data.meta.specs ?? {};
     this.variants = data.variants;
+    this.tags = data.tags || []; // добавлено
 
     if (this.hasVariants) {
       this.selectedVariantId = this.variants![0].product_variant_id;

@@ -6,6 +6,7 @@ import { useCartStore } from "@/stores/cart";
 import { Product } from "@/helpers/product";
 
 import SmartImage from "@/components/Bricks/SmartImage.vue";
+import ProductTagIcons from "./ProductTagIcons.vue";
 
 const props = defineProps<{ product: Product }>();
 
@@ -35,6 +36,7 @@ const price = computed(() => {
 
 <template>
   <v-card class="product-mini-card" elevation="2" @click="handleCardClick">
+    <product-tag-icons :tags="product.tags" />
     <smart-image :src="product.displayImage" :alt="product.displayName" :height="180" />
     <v-card-title class="product-mini-card__title text-truncate">{{ product.displayName }}</v-card-title>
     <v-card-subtitle class="product-mini-card__price text-h6 font-weight-bold">
@@ -51,6 +53,7 @@ const price = computed(() => {
 @use "@/assets/mixin" as mixin
 
 .product-mini-card
+  position: relative
   display: flex
   flex-direction: column
   align-items: stretch

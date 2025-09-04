@@ -3,9 +3,11 @@ import { useUIStore } from "@/stores/ui.ts";
 import { useAuthStore } from "@/stores/auth.ts";
 import { useCartStore } from "@/stores/cart.ts";
 import { useCategoriesStore } from "@/stores/categories.ts";
+import { useTagsStore } from "@/stores/tag.ts";
 
 export async function bootstrap() {
   await useUIStore().load(useCategoriesStore().loadCategories);
+  await useUIStore().load(useTagsStore().loadTags);
   await useUIStore().load(useProductsStore().loadProducts);
 }
 

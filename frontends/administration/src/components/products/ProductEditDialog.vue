@@ -21,6 +21,7 @@ function toForm(p: ProductDto | null): ProductDto {
   return {
     name: p?.name ?? "",
     categories: p?.categories ?? [],
+    tags: p?.tags ?? [],
     meta: {
       article: p?.meta.article ?? "",
       price: p?.meta.price ?? 0,

@@ -5,6 +5,7 @@ import { Product } from '@/model/product.entity';
 import { Category } from '@/model/category.entity';
 import { ProductVariant } from '@/model/product.variant.entity';
 import { FindOptionsRelations, In, Repository } from 'typeorm';
+import { Tag } from '@/model/tag.entity';
 
 @Injectable()
 export class AdminProductService {
@@ -15,6 +16,8 @@ export class AdminProductService {
     private readonly categoriesRepository: Repository<Category>,
     @InjectRepository(ProductVariant)
     private readonly variantsRepository: Repository<ProductVariant>,
+    @InjectRepository(Tag)
+    private readonly tagsRepository: Repository<Tag>,
   ) {}
 
   async getProduct(
@@ -43,13 +46,15 @@ export class AdminProductService {
     const categories: Category[] = payload.categories?.length
       ? await this.categoriesRepository.find({ where: { category_id: In(payload.categories) } })
       : [];
-    const entity = Product.fromDto(payload, categories);
+    const tags: Tag[] = payload.tags?.length
+      ? await this.tagsRepository.find({ where: { name: In(payload.tags) } })
+      : [];
+    const entity = Product.fromDto(payload, categories, tags);
     const saved = await this.productsRepository.save(entity);
     const withRelations = await this.getProduct(saved.product_id, { categories: true, variants: true });
     return withRelations.dto;
   }
 
-  // Update product
   async update(product_id: number, payload: ProductDto): Promise<ProductDto> {
     const product = await this.getProduct(product_id, { categories: true, variants: true });
     if (!product) {
@@ -64,11 +69,13 @@ export class AdminProductService {
     if (Array.isArray(payload.categories)) {
       product.categories = await this.categoriesRepository.find({ where: { category_id: In(payload.categories) } });
     }
+    if (Array.isArray(payload.tags)) {
+      product.tags = await this.tagsRepository.find({ where: { link: In(payload.tags) } });
+    }
     const saved = await this.productsRepository.save(product);
     return saved.dto;
   }
 
-  // Delete product
   async remove(product_id: number): Promise<void> {
     const product = await this.getProduct(product_id);
     if (!product) {
@@ -77,7 +84,6 @@ export class AdminProductService {
     await this.productsRepository.delete({ product_id });
   }
 
-  // Variants
   async listVariants(product_id: number): Promise<ProductVariantDto[]> {
     const product = await this.getProduct(product_id, { variants: true });
     if (!product) {
