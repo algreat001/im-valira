@@ -13,7 +13,7 @@ export class TagService {
 
   async list(): Promise<TagDto[]> {
     const tags = await this.tagRepository.find({ order: { name: 'ASC' } });
-    return tags.map(t => ({ name: t.name, icon: t.icon, link: t.link }));
+    return tags.map(t => ({ name: t.name, icon: t.icon, link: t.link, meta: t.meta }));
   }
 
   async getProductsByTagName(tagName: string): Promise<ProductDto[]> {
