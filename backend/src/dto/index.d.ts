@@ -42,6 +42,7 @@ export interface ProductDto {
 
   variants?: ProductVariantDto[];
   categories?: number[];
+  tags?: string[];
 }
 
 export interface RoleDto {
@@ -158,4 +159,11 @@ export interface BannerItemDto {
   link?: string;
 }
 
-
+export interface TagDto {
+  tag_id?: number;
+  name: string;
+  link: string;
+  icon?: string;
+  meta: Record<string, any>;
+  products?: ProductDto[];
+}

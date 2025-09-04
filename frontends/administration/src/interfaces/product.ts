@@ -13,6 +13,7 @@ export interface ProductDto {
 
   variants?: ProductVariantDto[];
   categories?: number[];
+  tags?: string[];
 }
 
 export type ProductParameterType = "text" | "select" | "number" | "size" | "color" | "material" | "raiting" | "date";

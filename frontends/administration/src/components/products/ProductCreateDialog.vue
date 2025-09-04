@@ -20,6 +20,7 @@ function getDefaultForm(): ProductDto {
   return {
     name: "",
     categories: [],
+    tags: [],
     meta: {
       article: "",
       price: 0,

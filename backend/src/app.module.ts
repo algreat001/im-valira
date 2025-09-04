@@ -19,6 +19,7 @@ import { Cart } from '@/model/cart.entity';
 import { Order } from '@/model/order.entity';
 import { OrderItem } from '@/model/order.item.entity';
 import { Banner } from '@/model/banner.entity';
+import { Tag } from '@/model/tag.entity';
 
 import { UsersModule } from '@/users/users.module';
 import { ConfigModule } from '@nestjs/config';
@@ -39,6 +40,8 @@ import { AdminGalleryModule } from '@/admin/gallery/admin.gallery.module';
 import { AdminProductModule } from '@/admin/product/admin.product.module';
 import { BannerModule } from '@/banner/banner.module';
 import { AdminBannerModule } from '@/admin/banner/admin.banner.module';
+import { TagModule } from '@/tag/tag.module';
+import { AdminTagModule } from '@/admin/tag/admin.tag.module';
 
 
 @Module({
@@ -53,7 +56,7 @@ import { AdminBannerModule } from '@/admin/banner/admin.banner.module';
       username: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [ User, Role, Product, ProductVariant, Cart, Category, Order, OrderItem, Banner ],
+      entities: [ User, Role, Product, ProductVariant, Cart, Category, Order, OrderItem, Banner, Tag ],
       synchronize: true,
     }),
     // Несколько статических фронтендов: основной (market) и админка (administration)
@@ -101,6 +104,8 @@ import { AdminBannerModule } from '@/admin/banner/admin.banner.module';
     AdminProductModule,
     BannerModule,
     AdminBannerModule,
+    TagModule,
+    AdminTagModule,
   ],
   controllers: [ AppController, ReportController ],
   providers: [ AppService, ReportService ],

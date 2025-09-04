@@ -1,18 +1,18 @@
 import { defineStore } from "pinia";
-import { computed, type Ref, ref } from "vue";
+import { type Ref, ref } from "vue";
 import { Product } from "@/helpers/product";
 import type { Category } from "@/stores/categories";
 
-import { newProduct } from "@/data/products";
 import { constants } from "@/constants";
 import { getProducts } from "@/backend/product.service";
+import { getProductsByTag } from "@/backend/tag.service";
 
 const ALL = constants.catalog.ALL;
-const NEW_PRODUCTS = newProduct;
 
 
 export const useProductsStore = defineStore("products", () => {
   const products: Ref<Product[]> = ref([]);
+  const tagProducts: Ref<Map<string, Product[]>> = ref(new Map());
 
   async function loadProducts() {
     const productsData = await getProducts();
@@ -45,12 +45,12 @@ export const useProductsStore = defineStore("products", () => {
     });
   }
 
-  const newProducts = computed(() => {
-    return products.value.filter(p => NEW_PRODUCTS.includes(p.product_id));
-  });
-
-  function getFilteredProduct(search: string, selectedCategory?: Category, sort?: string) {
+  function getFilteredProduct(search: string, selectedCategory?: Category, tag?: string, sort?: string) {
     let arr = getProductsByCategory(selectedCategory);
+
+    if (tag) {
+      arr = arr.filter(p => p.tags.includes(tag));
+    }
 
     if (search && search.trim().length > 3) {
       arr = arr.filter(p => p.name.toLowerCase().includes(search.toLowerCase()));
@@ -71,6 +71,19 @@ export const useProductsStore = defineStore("products", () => {
     return arr;
   }
 
+  function getTagProducts(tag: string): Product[] {
+    if (!tagProducts.value.has(tag)) {
+      tagProducts.value.set(tag, []);
+    }
+    if (tagProducts.value.get(tag)!.length === 0) {
+      getProductsByTag(tag).then(productsData => {
+        const mapped = productsData.map(p => new Product(p));
+        tagProducts.value.set(tag, mapped);
+      });
+    }
+    return tagProducts.value.get(tag)!;
+  }
+
   return {
     products,
     loadProducts,
@@ -78,6 +91,6 @@ export const useProductsStore = defineStore("products", () => {
     getProductsByCategory,
     getFilteredProduct,
     searchProducts,
-    newProducts
+    getTagProducts
   };
 });

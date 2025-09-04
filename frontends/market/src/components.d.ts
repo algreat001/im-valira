@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
     AppHeader: typeof import('./components/AppHeader.vue')['default']
+    AppLogo: typeof import('./components/AppLogo.vue')['default']
     ArticleList: typeof import('./components/ArticleList.vue')['default']
     ArticleView: typeof import('./components/ArticleView.vue')['default']
     BannerCarousel: typeof import('./components/BannerCarousel.vue')['default']
@@ -35,6 +36,8 @@ declare module 'vue' {
     ProductMiniCard: typeof import('./components/Product/ProductMiniCard.vue')['default']
     ProductSizeChoose: typeof import('./components/Product/Choose/ProductSizeChoose.vue')['default']
     ProductSpecsList: typeof import('./components/Product/ProductSpecsList.vue')['default']
+    ProductTagIcons: typeof import('./components/Product/ProductTagIcons.vue')['default']
+    ProductTagList: typeof import('./components/Product/ProductTagList.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SbpPayment: typeof import('./components/Payment/SbpPayment.vue')['default']

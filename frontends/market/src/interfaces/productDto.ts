@@ -13,4 +13,5 @@ export interface ProductDto {
 
   variants?: ProductVariantDto[];
   categories?: number[];
+  tags?: string[]; // добавлено
 }

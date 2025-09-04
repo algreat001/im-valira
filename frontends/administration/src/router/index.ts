@@ -56,6 +56,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: "Баннеры", requiresAuth: true }
   },
   {
+    path: "/tags",
+    name: "Tags",
+    component: () => import("@/pages/TagPage.vue"),
+    meta: { title: "Теги", requiresAuth: true }
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "AdminNotFound",
     component: () => import("@/pages/NotFound.vue"),

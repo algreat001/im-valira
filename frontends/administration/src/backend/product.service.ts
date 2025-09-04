@@ -1,14 +1,15 @@
 import { apiFetch } from "@/backend/request.service";
+import type { ProductDto, ProductVariantDto } from "@/interfaces/product.ts";
 
-export async function listProducts(): Promise<any[]> {
+export async function listProducts(): Promise<ProductDto[]> {
   return apiFetch<any[]>("/admin/products/list", { method: "GET" });
 }
 
-export async function createProduct(payload: any): Promise<any> {
+export async function createProduct(payload: any): Promise<ProductDto> {
   return apiFetch<any>("/admin/products", { method: "POST", body: JSON.stringify(payload) });
 }
 
-export async function updateProduct(productId: number | string, payload: any): Promise<any> {
+export async function updateProduct(productId: number | string, payload: Partial<ProductDto>): Promise<any> {
   return apiFetch<any>(
     `/admin/products/${encodeURIComponent(productId)}`,
     { method: "PATCH", body: JSON.stringify(payload) }
@@ -19,11 +20,11 @@ export async function deleteProduct(productId: number | string): Promise<void> {
   await apiFetch(`/admin/products/${encodeURIComponent(productId)}`, { method: "DELETE" });
 }
 
-export async function listVariants(productId: number | string): Promise<any[]> {
+export async function listVariants(productId: number | string): Promise<ProductVariantDto[]> {
   return apiFetch<any[]>(`/admin/products/${encodeURIComponent(productId)}/variants`, { method: "GET" });
 }
 
-export async function createVariant(productId: number | string, payload: any): Promise<any> {
+export async function createVariant(productId: number | string, payload: ProductVariantDto): Promise<any> {
   return apiFetch<any>(
     `/admin/products/${encodeURIComponent(productId)}/variants`,
     { method: "POST", body: JSON.stringify(payload) }
@@ -33,7 +34,7 @@ export async function createVariant(productId: number | string, payload: any): P
 export async function updateVariant(
   productId: number | string,
   variantId: number | string,
-  payload: any
+  payload: Partial<ProductVariantDto>
 ): Promise<any> {
   return apiFetch<any>(`/admin/products/${encodeURIComponent(productId)}/variants/${encodeURIComponent(variantId)}`, {
     method: "PATCH",

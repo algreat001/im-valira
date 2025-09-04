@@ -8,7 +8,10 @@ import ProductSpecsList from "./ProductSpecsList.vue";
 import ProductGallery from "./ProductGallery.vue";
 import ProductCategoryList from "./ProductCategoryList.vue";
 import ProductChooseList from "./ProductChooseList.vue";
+import ProductTagList from "./ProductTagList.vue";
 import { useCategoriesStore } from "@/stores/categories.ts";
+import type { Tag } from "@/interfaces/tag.ts";
+import { useTagsStore } from "@/stores/tag.ts";
 
 interface ProductProps {
 }
@@ -32,6 +35,12 @@ function handleAddToCart(event?: MouseEvent) {
   cart.addToCart(product.value, 1);
 }
 
+function getTags(tags: undefined | string[]): undefined | Tag[] {
+  if (!tags) {
+    return;
+  }
+  return tags.map(link => useTagsStore().getTagByLink(link)).filter(Boolean) as Tag[];
+}
 
 </script>
 
@@ -51,7 +60,7 @@ function handleAddToCart(event?: MouseEvent) {
         <div class="price-value">{{ product.formatPrice() }}</div>
       </div>
 
-      <v-btn color="primary" size="large" class="w-100 my-4" @click="handleAddToCart($event)">Добавить в корзину</v-btn>
+      <v-btn color="primary" size="large" class="my-4" block @click="handleAddToCart($event)">Добавить в корзину</v-btn>
 
       <div class="d-sm-flex flex-column ga-2">
         <span class="price-label">Характеристики</span>
@@ -59,6 +68,7 @@ function handleAddToCart(event?: MouseEvent) {
       </div>
       <v-divider class="my-4"></v-divider>
       <product-category-list :categories="productCategories" />
+      <product-tag-list v-if="product.tags?.length" :tags="getTags(product.tags)" class="mt-4" />
     </v-col>
   </v-row>
 </template>

@@ -6,8 +6,10 @@ import type { ProductDto } from "@/interfaces/product";
 import SpecsForm from "@/components/products/SpecsForm.vue";
 import GalleryForm from "@/components/gallery/GalleryForm.vue";
 import type { ProductMeta, SpecMeta } from "@/interfaces/meta";
-import { listCategories } from "@/backend/category.service";
 import type { Category } from "@/interfaces/category";
+import type { Tag } from "@/interfaces/tag";
+import { listCategories } from "@/backend/category.service";
+import { listTags } from "@/backend/tag.service";
 
 const model = defineModel<ProductDto>({ required: true });
 
@@ -18,15 +20,26 @@ interface Props {
 
 const props = defineProps<Props>();
 
-// Категории (выбор)
 const categoriesOptions = ref<Category[]>([]);
 const categoriesLoading = ref(false);
 const categoriesError = ref<string | null>(null);
+
+const tagsOptions = ref<Tag[]>([]);
+const tagsLoading = ref(false);
+const tagsError = ref<string | null>(null);
 
 const categories = computed<number[]>({
   get: () => (model.value.categories as number[]) || [],
   set: (val) => {
     model.value.categories = val || [];
+  }
+});
+
+// Теги (массив строк-имен) добавлено
+const tags = computed<string[]>({
+  get: () => (model.value.tags as string[]) || [],
+  set: (val) => {
+    model.value.tags = val || [];
   }
 });
 
@@ -65,7 +78,22 @@ async function loadCategories() {
   }
 }
 
-onMounted(loadCategories);
+async function loadTags() {
+  tagsLoading.value = true;
+  tagsError.value = null;
+  try {
+    tagsOptions.value = await listTags();
+  } catch (e: any) {
+    tagsError.value = e?.message || "Не удалось загрузить теги";
+  } finally {
+    tagsLoading.value = false;
+  }
+}
+
+onMounted(() => {
+  loadCategories();
+  loadTags();
+});
 </script>
 
 <template>
@@ -117,6 +145,25 @@ onMounted(loadCategories);
       <v-alert v-if="categoriesError" type="error" variant="tonal" class="mt-2">{{ categoriesError }}</v-alert>
     </v-col>
 
+    <v-col cols="12">
+      <v-autocomplete
+        v-model="tags"
+        :items="tagsOptions"
+        :loading="tagsLoading"
+        item-title="name"
+        item-value="link"
+        label="Теги"
+        multiple
+        chips
+        closable-chips
+        density="comfortable"
+        hide-details
+        clearable
+        hint="Выберите или начните вводить тег"
+        persistent-hint
+      />
+      <v-alert v-if="tagsError" type="error" variant="tonal" class="mt-2">{{ tagsError }}</v-alert>
+    </v-col>
     <v-col cols="12">
       <gallery-form v-model="gallery" title="Галерея товара" />
     </v-col>
