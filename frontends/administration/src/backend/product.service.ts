@@ -21,11 +21,14 @@ export async function deleteProduct(productId: number | string): Promise<void> {
 }
 
 export async function listVariants(productId: number | string): Promise<ProductVariantDto[]> {
-  return apiFetch<any[]>(`/admin/products/${encodeURIComponent(productId)}/variants`, { method: "GET" });
+  return apiFetch<ProductVariantDto[]>(`/admin/products/${encodeURIComponent(productId)}/variants`, { method: "GET" });
 }
 
-export async function createVariant(productId: number | string, payload: ProductVariantDto): Promise<any> {
-  return apiFetch<any>(
+export async function createVariant(
+  productId: number | string,
+  payload: Partial<ProductVariantDto>
+): Promise<ProductVariantDto> {
+  return apiFetch<ProductVariantDto>(
     `/admin/products/${encodeURIComponent(productId)}/variants`,
     { method: "POST", body: JSON.stringify(payload) }
   );
@@ -36,7 +39,8 @@ export async function updateVariant(
   variantId: number | string,
   payload: Partial<ProductVariantDto>
 ): Promise<any> {
-  return apiFetch<any>(`/admin/products/${encodeURIComponent(productId)}/variants/${encodeURIComponent(variantId)}`, {
+  return apiFetch<ProductVariantDto>(`/admin/products/${encodeURIComponent(productId)}/variants/${encodeURIComponent(
+    variantId)}`, {
     method: "PATCH",
     body: JSON.stringify(payload)
   });
