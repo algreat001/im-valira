@@ -47,7 +47,7 @@ export class AdminProductService {
       ? await this.categoriesRepository.find({ where: { category_id: In(payload.categories) } })
       : [];
     const tags: Tag[] = payload.tags?.length
-      ? await this.tagsRepository.find({ where: { name: In(payload.tags) } })
+      ? await this.tagsRepository.find({ where: { link: In(payload.tags) } })
       : [];
     const entity = Product.fromDto(payload, categories, tags);
     const saved = await this.productsRepository.save(entity);
